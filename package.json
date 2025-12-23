@@ -1,0 +1,12 @@
+{
+  "name": "ai-beyond-hype-event",
+  "version": "1.0.0",
+  "description": "AI Beyond the Hype event website",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
