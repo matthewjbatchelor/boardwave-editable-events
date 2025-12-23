@@ -108,36 +108,26 @@ a:hover {
 
 /* Hero Section */
 .hero {
-    min-height: 100vh;
+    width: 100%;
+    height: auto;
+    min-height: 70vh;
     background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
     background-image: url('../images/hero-background.png');
-    background-size: cover;
-    background-position: center;
+    background-size: contain;
+    background-position: center top;
     background-repeat: no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 100px 20px 60px;
-    color: var(--text-light);
-    text-align: center;
+    padding: 70px 0 0 0;
     position: relative;
+    aspect-ratio: 1684 / 1191;
+    max-height: 100vh;
 }
 
-.hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 0;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 1;
-    max-width: 900px;
+@media (max-width: 768px) {
+    .hero {
+        min-height: 50vh;
+        background-size: cover;
+        aspect-ratio: auto;
+    }
 }
 
 .hero h1 {
