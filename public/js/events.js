@@ -110,6 +110,13 @@ async function viewEvent(eventId, updateHistory = true) {
       backBtn.addEventListener('click', () => showEventsList(true));
     }
 
+    // Add edit event button event listener
+    const editBtn = document.getElementById('editEventBtn');
+    if (editBtn) {
+      const eventIdToEdit = editBtn.dataset.eventId;
+      editBtn.addEventListener('click', () => showEventForm(eventIdToEdit));
+    }
+
     if (window.isAdmin) {
       addEventViewAdminButtons();
     }
@@ -150,6 +157,13 @@ async function viewEventBySlug(slug, updateHistory = true) {
       backBtn.addEventListener('click', () => showEventsList(true));
     }
 
+    // Add edit event button event listener
+    const editBtn = document.getElementById('editEventBtn');
+    if (editBtn) {
+      const eventIdToEdit = editBtn.dataset.eventId;
+      editBtn.addEventListener('click', () => showEventForm(eventIdToEdit));
+    }
+
     if (window.isAdmin) {
       addEventViewAdminButtons();
     }
@@ -164,6 +178,7 @@ function renderEventView(event) {
 
   view.innerHTML = `
     ${window.isAdmin ? '<button class="back-button" id="backToEventsBtn">← Back to Events</button>' : ''}
+    ${window.isAdmin ? `<button class="edit-event-button" id="editEventBtn" data-event-id="${event.id}">Edit Event</button>` : ''}
 
     <!-- Hero Section -->
     <section class="hero" id="home">
@@ -331,7 +346,7 @@ function renderEventView(event) {
         ` : ''}
 
         <div class="partner-hero-image">
-          <img src="/images/hero-background.png" alt="Event">
+          <img src="/images/panel-discussion.jpg" alt="Event">
         </div>
       </div>
     </section>

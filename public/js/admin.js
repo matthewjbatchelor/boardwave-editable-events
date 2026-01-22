@@ -1,5 +1,80 @@
 // Admin functionality for event management
 
+// Image upload helper function
+async function uploadImage(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const response = await fetch('/api/upload/image', {
+      method: 'POST',
+      credentials: 'include',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Upload failed');
+    }
+
+    const data = await response.json();
+    return data.imageUrl;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
+}
+
+// Setup image upload input with preview
+function setupImageUpload(inputId, previewId, currentImage) {
+  const input = document.getElementById(inputId);
+  const preview = document.getElementById(previewId);
+
+  if (!input || !preview) return;
+
+  // Show current image if exists
+  if (currentImage) {
+    preview.innerHTML = `<img src="/${currentImage}" alt="Current image"><span class="image-path">${currentImage}</span>`;
+    preview.dataset.currentImage = currentImage;
+  } else {
+    preview.innerHTML = '<span class="no-image">No image selected</span>';
+    preview.dataset.currentImage = '';
+  }
+
+  input.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        preview.innerHTML = `<img src="${e.target.result}" alt="Preview"><span class="image-path">New file: ${file.name}</span>`;
+        preview.dataset.newFile = 'true';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+}
+
+// Get image value (either upload new or keep existing)
+async function getImageValue(inputId, previewId) {
+  const input = document.getElementById(inputId);
+  const preview = document.getElementById(previewId);
+
+  if (!input || !preview) return '';
+
+  // Check if there's a new file to upload
+  if (input.files && input.files[0]) {
+    try {
+      const imageUrl = await uploadImage(input.files[0]);
+      return imageUrl;
+    } catch (error) {
+      alert('Failed to upload image. Using existing image if available.');
+      return preview.dataset.currentImage || '';
+    }
+  }
+
+  // Return existing image path
+  return preview.dataset.currentImage || '';
+}
+
 function enableAdminFeatures() {
   const addEventBtn = document.getElementById('addEventBtn');
   if (addEventBtn) {
@@ -52,18 +127,6 @@ function addEventCardAdminButtons() {
 
 function addEventViewAdminButtons() {
   if (!currentEvent) return;
-
-  const eventId = currentEvent.id;
-
-  // Add edit button to hero
-  const hero = document.querySelector('.hero');
-  if (hero && !hero.querySelector('.btn-edit')) {
-    const btn = document.createElement('button');
-    btn.className = 'btn-edit hero-edit-btn';
-    btn.textContent = 'Edit Event';
-    btn.addEventListener('click', () => showEventForm(eventId));
-    hero.appendChild(btn);
-  }
 
   // Add edit buttons to hosts
   document.querySelectorAll('#host .profile-card').forEach(card => {
@@ -184,8 +247,9 @@ async function showEventForm(eventId) {
     <div class="form-section">
       <h3>Schedule Section</h3>
       <div class="form-group">
-        <label for="eventWelcome">Welcome Message</label>
-        <textarea id="eventWelcome" rows="3">${event?.welcomeMessage || ''}</textarea>
+        <label>Welcome Message</label>
+        <div id="eventWelcomeEditor" class="quill-editor"></div>
+        <input type="hidden" id="eventWelcome">
       </div>
       <div class="form-group">
         <label for="eventSignature">Signature</label>
@@ -224,13 +288,15 @@ async function showEventForm(eventId) {
         <input type="text" id="partnerName" value="${event?.partnerName || ''}">
       </div>
       <div class="form-group">
-        <label for="partnerLogo">Partner Logo Path</label>
-        <input type="text" id="partnerLogo" value="${event?.partnerLogo || ''}" placeholder="images/eventpartner.png">
+        <label for="partnerLogoUpload">Partner Logo</label>
+        <input type="file" id="partnerLogoUpload" accept="image/*" class="image-upload-input">
+        <div id="partnerLogoPreview" class="image-preview"></div>
         <small class="form-hint">Logo will appear in the hero area and Event Partner section</small>
       </div>
       <div class="form-group">
-        <label for="partnerDescription">Partner Description (HTML)</label>
-        <textarea id="partnerDescription" rows="4">${event?.partnerDescription || ''}</textarea>
+        <label>Partner Description</label>
+        <div id="partnerDescriptionEditor" class="quill-editor"></div>
+        <input type="hidden" id="partnerDescription">
       </div>
       <div class="form-group">
         <label for="partnerWebsite">Partner Website</label>
@@ -241,8 +307,9 @@ async function showEventForm(eventId) {
     <div class="form-section">
       <h3>Testimonial</h3>
       <div class="form-group">
-        <label for="testimonialText">Testimonial Text</label>
-        <textarea id="testimonialText" rows="4">${event?.testimonialText || ''}</textarea>
+        <label>Testimonial Text</label>
+        <div id="testimonialTextEditor" class="quill-editor"></div>
+        <input type="hidden" id="testimonialText">
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -263,12 +330,14 @@ async function showEventForm(eventId) {
     <div class="form-section">
       <h3>Event Connect</h3>
       <div class="form-group">
-        <label for="connectIntro">Intro Text</label>
-        <textarea id="connectIntro" rows="2">${event?.connectIntro || ''}</textarea>
+        <label>Intro Text</label>
+        <div id="connectIntroEditor" class="quill-editor"></div>
+        <input type="hidden" id="connectIntro">
       </div>
       <div class="form-group">
-        <label for="connectInstructions">Instructions</label>
-        <textarea id="connectInstructions" rows="2">${event?.connectInstructions || ''}</textarea>
+        <label>Instructions</label>
+        <div id="connectInstructionsEditor" class="quill-editor"></div>
+        <input type="hidden" id="connectInstructions">
       </div>
     </div>
   `;
@@ -285,56 +354,119 @@ async function showEventForm(eventId) {
   modal.classList.add('active');
   setupModalClose(modal);
 
-  // Initialize Quill editor for description
-  if (typeof Quill !== 'undefined') {
-    window.descriptionEditor = new Quill('#eventDescriptionEditor', {
-      theme: 'snow',
-      modules: {
-        toolbar: [
-          [{ 'header': [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline'],
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-          ['link'],
-          ['clean']
-        ]
-      },
-      placeholder: 'Enter event description...'
-    });
+  // Initialize Quill editors and image uploads after a short delay to ensure DOM is ready
+  setTimeout(() => {
+    initializeEventEditors(event);
+    // Setup image upload for partner logo
+    setupImageUpload('partnerLogoUpload', 'partnerLogoPreview', event ? event.partnerLogo : '');
+  }, 100);
+}
 
-    // Set initial content
-    if (event?.description) {
-      window.descriptionEditor.root.innerHTML = event.description;
+function initializeEventEditors(event) {
+  console.log('initializeEventEditors called, Quill defined:', typeof Quill !== 'undefined');
+
+  if (typeof Quill === 'undefined') {
+    console.error('Quill is not loaded - falling back to textareas');
+    // Fallback: convert editor divs to textareas
+    var editorConfigs = [
+      { id: 'eventDescriptionEditor', hiddenId: 'eventDescription', content: event ? event.description : '' },
+      { id: 'eventWelcomeEditor', hiddenId: 'eventWelcome', content: event ? event.welcomeMessage : '' },
+      { id: 'partnerDescriptionEditor', hiddenId: 'partnerDescription', content: event ? event.partnerDescription : '' },
+      { id: 'testimonialTextEditor', hiddenId: 'testimonialText', content: event ? event.testimonialText : '' },
+      { id: 'connectIntroEditor', hiddenId: 'connectIntro', content: event ? event.connectIntro : '' },
+      { id: 'connectInstructionsEditor', hiddenId: 'connectInstructions', content: event ? event.connectInstructions : '' }
+    ];
+    editorConfigs.forEach(function(config) {
+      var container = document.getElementById(config.id);
+      if (container) {
+        var textarea = document.createElement('textarea');
+        textarea.id = config.hiddenId;
+        textarea.rows = 4;
+        textarea.value = config.content || '';
+        textarea.className = 'fallback-textarea';
+        container.parentNode.replaceChild(textarea, container);
+      }
+    });
+    return;
+  }
+
+  var toolbarOptions = [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    ['link'],
+    ['clean']
+  ];
+
+  // Helper function to create editor
+  function createEditor(containerId, placeholder, content) {
+    var container = document.getElementById(containerId);
+    if (!container) {
+      console.error('Container not found:', containerId);
+      return null;
+    }
+    console.log('Creating Quill editor for:', containerId);
+    try {
+      var editor = new Quill(container, {
+        theme: 'snow',
+        modules: { toolbar: toolbarOptions },
+        placeholder: placeholder
+      });
+      if (content) {
+        editor.root.innerHTML = content;
+      }
+      console.log('Quill editor created successfully for:', containerId);
+      return editor;
+    } catch (err) {
+      console.error('Error creating Quill editor:', err);
+      return null;
     }
   }
+
+  // Initialize all editors
+  window.descriptionEditor = createEditor('eventDescriptionEditor', 'Enter event description...', event ? event.description : '');
+  window.welcomeEditor = createEditor('eventWelcomeEditor', 'Enter welcome message...', event ? event.welcomeMessage : '');
+  window.partnerDescEditor = createEditor('partnerDescriptionEditor', 'Enter partner description...', event ? event.partnerDescription : '');
+  window.testimonialEditor = createEditor('testimonialTextEditor', 'Enter testimonial...', event ? event.testimonialText : '');
+  window.connectIntroEditor = createEditor('connectIntroEditor', 'Enter intro text...', event ? event.connectIntro : '');
+  window.connectInstructionsEditor = createEditor('connectInstructionsEditor', 'Enter instructions...', event ? event.connectInstructions : '');
 }
 
 async function saveEvent(eventId) {
-  // Get description from Quill editor
-  const description = window.descriptionEditor ? window.descriptionEditor.root.innerHTML : '';
+  // Get content from Quill editors
+  const getEditorContent = (editor) => {
+    if (!editor) return '';
+    const content = editor.root.innerHTML;
+    // Return empty string if only contains empty paragraph
+    return content === '<p><br></p>' ? '' : content;
+  };
+
+  // Handle image uploads
+  const partnerLogo = await getImageValue('partnerLogoUpload', 'partnerLogoPreview');
 
   const data = {
     title: document.getElementById('eventTitle').value,
     subtitle: document.getElementById('eventSubtitle').value,
     eventDate: document.getElementById('eventDate').value || null,
     location: document.getElementById('eventLocation').value,
-    description: description,
+    description: getEditorContent(window.descriptionEditor),
     isPublished: document.getElementById('eventPublished').checked,
-    welcomeMessage: document.getElementById('eventWelcome').value,
+    welcomeMessage: getEditorContent(window.welcomeEditor),
     signature: document.getElementById('eventSignature').value,
     contactName: document.getElementById('contactName').value,
     contactTitle: document.getElementById('contactTitle').value,
     contactEmail: document.getElementById('contactEmail').value,
     contactPhone: document.getElementById('contactPhone').value,
     partnerName: document.getElementById('partnerName').value,
-    partnerLogo: document.getElementById('partnerLogo').value,
-    partnerDescription: document.getElementById('partnerDescription').value,
+    partnerLogo: partnerLogo,
+    partnerDescription: getEditorContent(window.partnerDescEditor),
     partnerWebsite: document.getElementById('partnerWebsite').value,
-    testimonialText: document.getElementById('testimonialText').value,
+    testimonialText: getEditorContent(window.testimonialEditor),
     testimonialAuthor: document.getElementById('testimonialAuthor').value,
     testimonialTitle: document.getElementById('testimonialTitle').value,
     testimonialCompany: document.getElementById('testimonialCompany').value,
-    connectIntro: document.getElementById('connectIntro').value,
-    connectInstructions: document.getElementById('connectInstructions').value
+    connectIntro: getEditorContent(window.connectIntroEditor),
+    connectInstructions: getEditorContent(window.connectInstructionsEditor)
   };
 
   try {
@@ -448,12 +580,14 @@ async function showPersonForm(type, personId) {
       </div>
     </div>
     <div class="form-group">
-      <label for="personBio">Bio</label>
-      <textarea id="personBio" rows="4">${person?.bio || ''}</textarea>
+      <label>Bio</label>
+      <div id="personBioEditor" class="quill-editor"></div>
+      <input type="hidden" id="personBio">
     </div>
     <div class="form-group">
-      <label for="personImage">Image Path</label>
-      <input type="text" id="personImage" value="${person?.image || ''}" placeholder="images/guests/name.jpg" ${!person?.image ? 'disabled' : ''}>
+      <label for="personImageUpload">Profile Image</label>
+      <input type="file" id="personImageUpload" accept="image/*" class="image-upload-input">
+      <div id="personImagePreview" class="image-preview"></div>
       <div class="form-checkbox">
         <label>
           <input type="checkbox" id="usePlaceholder" ${!person?.image ? 'checked' : ''}>
@@ -486,35 +620,84 @@ async function showPersonForm(type, personId) {
     deleteBtn.onclick = () => deletePerson(type, person?.id);
   }
 
-  // Handle placeholder checkbox
-  const placeholderCheckbox = document.getElementById('usePlaceholder');
-  const imageInput = document.getElementById('personImage');
-  if (placeholderCheckbox && imageInput) {
-    placeholderCheckbox.addEventListener('change', () => {
-      if (placeholderCheckbox.checked) {
-        imageInput.disabled = true;
-        imageInput.value = '';
-      } else {
-        imageInput.disabled = false;
-        imageInput.focus();
-      }
-    });
-  }
-
   modal.classList.add('active');
   setupModalClose(modal);
+
+  // Initialize after a short delay
+  setTimeout(() => {
+    // Setup image upload for profile image
+    setupImageUpload('personImageUpload', 'personImagePreview', person ? person.image : '');
+
+    // Handle placeholder checkbox
+    const placeholderCheckbox = document.getElementById('usePlaceholder');
+    const imageUploadGroup = document.getElementById('personImageUpload')?.parentElement;
+    const imagePreview = document.getElementById('personImagePreview');
+
+    if (placeholderCheckbox) {
+      // Update UI based on initial state
+      const updateImageUploadState = () => {
+        if (placeholderCheckbox.checked) {
+          if (imageUploadGroup) {
+            document.getElementById('personImageUpload').disabled = true;
+          }
+          if (imagePreview) {
+            imagePreview.innerHTML = '<span class="no-image">Using placeholder image</span>';
+            imagePreview.dataset.currentImage = '';
+          }
+        } else {
+          if (imageUploadGroup) {
+            document.getElementById('personImageUpload').disabled = false;
+          }
+        }
+      };
+
+      updateImageUploadState();
+      placeholderCheckbox.addEventListener('change', updateImageUploadState);
+    }
+
+    // Initialize Quill editor for bio
+    if (typeof Quill !== 'undefined') {
+      window.personBioEditor = new Quill('#personBioEditor', {
+        theme: 'snow',
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline'],
+            ['link'],
+            ['clean']
+          ]
+        },
+        placeholder: 'Enter bio...'
+      });
+      if (person?.bio) {
+        window.personBioEditor.root.innerHTML = person.bio;
+      }
+    }
+  }, 100);
 }
 
 async function savePerson(type, personId) {
   const usePlaceholder = document.getElementById('usePlaceholder')?.checked;
+
+  // Get bio from Quill editor
+  const getBioContent = () => {
+    if (!window.personBioEditor) return '';
+    const content = window.personBioEditor.root.innerHTML;
+    return content === '<p><br></p>' ? '' : content;
+  };
+
+  // Handle image upload
+  let personImage = null;
+  if (!usePlaceholder) {
+    personImage = await getImageValue('personImageUpload', 'personImagePreview');
+  }
 
   const data = {
     eventId: currentEvent.id,
     name: document.getElementById('personName').value,
     title: document.getElementById('personTitle').value,
     company: document.getElementById('personCompany').value,
-    bio: document.getElementById('personBio').value,
-    image: usePlaceholder ? null : document.getElementById('personImage').value,
+    bio: getBioContent(),
+    image: personImage,
     sortOrder: parseInt(document.getElementById('personSort').value) || 0
   };
 
@@ -595,8 +778,9 @@ async function showScheduleForm(itemId) {
       <input type="text" id="scheduleTime" required value="${item?.time || ''}" placeholder="18:30">
     </div>
     <div class="form-group">
-      <label for="scheduleDesc">Description *</label>
-      <textarea id="scheduleDesc" rows="3" required>${item?.description || ''}</textarea>
+      <label>Description *</label>
+      <div id="scheduleDescEditor" class="quill-editor"></div>
+      <input type="hidden" id="scheduleDesc">
     </div>
     <div class="form-group">
       <label for="scheduleSort">Sort Order</label>
@@ -615,13 +799,38 @@ async function showScheduleForm(itemId) {
 
   modal.classList.add('active');
   setupModalClose(modal);
+
+  // Initialize Quill editor for schedule description
+  if (typeof Quill !== 'undefined') {
+    window.scheduleDescEditor = new Quill('#scheduleDescEditor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline'],
+          ['link'],
+          ['clean']
+        ]
+      },
+      placeholder: 'Enter description...'
+    });
+    if (item?.description) {
+      window.scheduleDescEditor.root.innerHTML = item.description;
+    }
+  }
 }
 
 async function saveScheduleItem(itemId) {
+  // Get description from Quill editor
+  const getDescContent = () => {
+    if (!window.scheduleDescEditor) return '';
+    const content = window.scheduleDescEditor.root.innerHTML;
+    return content === '<p><br></p>' ? '' : content;
+  };
+
   const data = {
     eventId: currentEvent.id,
     time: document.getElementById('scheduleTime').value,
-    description: document.getElementById('scheduleDesc').value,
+    description: getDescContent(),
     sortOrder: parseInt(document.getElementById('scheduleSort').value) || 0
   };
 
