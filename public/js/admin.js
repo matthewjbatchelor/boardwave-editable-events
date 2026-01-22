@@ -167,8 +167,9 @@ async function showEventForm(eventId) {
         </div>
       </div>
       <div class="form-group">
-        <label for="eventDescription">Description (HTML)</label>
-        <textarea id="eventDescription" rows="6">${event?.description || ''}</textarea>
+        <label>Description</label>
+        <div id="eventDescriptionEditor" class="quill-editor"></div>
+        <input type="hidden" id="eventDescription">
       </div>
       <div class="form-group">
         <label>
@@ -281,15 +282,40 @@ async function showEventForm(eventId) {
 
   modal.classList.add('active');
   setupModalClose(modal);
+
+  // Initialize Quill editor for description
+  if (typeof Quill !== 'undefined') {
+    window.descriptionEditor = new Quill('#eventDescriptionEditor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ 'header': [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          ['link'],
+          ['clean']
+        ]
+      },
+      placeholder: 'Enter event description...'
+    });
+
+    // Set initial content
+    if (event?.description) {
+      window.descriptionEditor.root.innerHTML = event.description;
+    }
+  }
 }
 
 async function saveEvent(eventId) {
+  // Get description from Quill editor
+  const description = window.descriptionEditor ? window.descriptionEditor.root.innerHTML : '';
+
   const data = {
     title: document.getElementById('eventTitle').value,
     subtitle: document.getElementById('eventSubtitle').value,
     eventDate: document.getElementById('eventDate').value || null,
     location: document.getElementById('eventLocation').value,
-    description: document.getElementById('eventDescription').value,
+    description: description,
     isPublished: document.getElementById('eventPublished').checked,
     welcomeMessage: document.getElementById('eventWelcome').value,
     signature: document.getElementById('eventSignature').value,

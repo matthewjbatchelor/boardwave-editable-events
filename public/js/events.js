@@ -166,7 +166,7 @@ function renderEventView(event) {
     ${window.isAdmin ? '<button class="back-button" id="backToEventsBtn">← Back to Events</button>' : ''}
 
     <!-- Hero Section -->
-    <section class="hero" id="home" style="background-image: url('${event.heroImage ? '/' + event.heroImage : '/images/hero-background.png'}')">
+    <section class="hero" id="home">
       <div class="hero-content">
         <h1>${event.title}</h1>
         ${event.subtitle ? `<p class="hero-details">${event.subtitle}</p>` : ''}
