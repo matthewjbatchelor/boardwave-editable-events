@@ -131,6 +131,13 @@ function initAuth() {
 
       if (result.success) {
         hideLoginModal();
+        // Refresh the page to show admin content if on home page
+        if (!getEventSlugFromUrl()) {
+          loadEvents();
+        } else if (currentEvent) {
+          // Re-render current event to show admin buttons
+          viewEvent(currentEvent.id, false);
+        }
       } else {
         errorText.textContent = result.error || 'Login failed';
       }

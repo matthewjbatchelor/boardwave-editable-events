@@ -163,7 +163,7 @@ function renderEventView(event) {
   const view = document.getElementById('eventView');
 
   view.innerHTML = `
-    <button class="back-button" id="backToEventsBtn">← Back to Events</button>
+    ${window.isAdmin ? '<button class="back-button" id="backToEventsBtn">← Back to Events</button>' : ''}
 
     <!-- Hero Section -->
     <section class="hero" id="home" style="${event.heroImage ? `background-image: url('/${event.heroImage}')` : ''}">
@@ -384,11 +384,57 @@ function showEventsList(updateHistory = true) {
 }
 
 // Initialize - check URL for direct event access
-document.addEventListener('siteAccessGranted', () => {
+document.addEventListener('siteAccessGranted', initializeApp);
+
+async function initializeApp() {
   const eventSlug = getEventSlugFromUrl();
+
   if (eventSlug) {
+    // Direct link to event - publicly accessible
     viewEventBySlug(eventSlug, false);
   } else {
-    loadEvents();
+    // No event slug - check if admin
+    await checkAuthAndShowContent();
   }
-});
+}
+
+async function checkAuthAndShowContent() {
+  try {
+    const response = await fetch('/api/auth/session', { credentials: 'include' });
+    const data = await response.json();
+
+    if (data.isAuthenticated && data.user?.role === 'admin') {
+      // Admin can see events list
+      window.isAdmin = true;
+      loadEvents();
+    } else {
+      // Not admin - show message that direct link is required
+      showNoAccessMessage();
+    }
+  } catch (error) {
+    console.error('Error checking auth:', error);
+    showNoAccessMessage();
+  }
+}
+
+function showNoAccessMessage() {
+  const grid = document.getElementById('eventsGrid');
+  if (grid) {
+    grid.innerHTML = `
+      <div class="no-access-message">
+        <h2>Welcome to Boardwave Events</h2>
+        <p>To view an event, please use a direct event link.</p>
+        <p>If you're an administrator, please <a href="#" id="loginLink">log in</a> to manage events.</p>
+      </div>
+    `;
+
+    // Add login link handler
+    const loginLink = document.getElementById('loginLink');
+    if (loginLink) {
+      loginLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('loginModal').classList.add('active');
+      });
+    }
+  }
+}

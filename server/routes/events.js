@@ -9,8 +9,8 @@ const { ensureAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
-// GET all events
-router.get('/', async (req, res) => {
+// GET all events (admin only)
+router.get('/', ensureAdmin, async (req, res) => {
   try {
     const events = await Event.findAll();
     res.json(events);

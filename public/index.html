@@ -10,18 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Site Password Overlay -->
-    <div id="sitePasswordOverlay" class="overlay">
-        <div class="overlay-content">
-            <img src="/images/blackboardwave.png" alt="Boardwave" class="overlay-logo">
-            <h2>Enter Site Password</h2>
-            <form id="sitePasswordForm">
-                <input type="password" id="sitePassword" placeholder="Password" required>
-                <button type="submit" class="btn-primary">Enter</button>
-            </form>
-            <p id="sitePasswordError" class="error-text"></p>
-        </div>
-    </div>
+    <!-- Hidden overlay (kept for backward compatibility) -->
+    <div id="sitePasswordOverlay" class="overlay hidden"></div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">

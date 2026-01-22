@@ -75,13 +75,8 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/images', express.static(path.join(__dirname, '../images')));
 
-// Site password routes (before protection middleware)
+// API routes
 app.use('/api/site', siteRoutes);
-
-// Site password protection
-app.use(requireSitePassword);
-
-// API routes (protected)
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/guests', guestsRoutes);
