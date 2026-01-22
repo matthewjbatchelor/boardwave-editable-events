@@ -2,6 +2,30 @@
 
 let currentEvent = null;
 
+// URL Routing
+function getEventSlugFromUrl() {
+  const path = window.location.pathname;
+  const match = path.match(/^\/event\/(.+)$/);
+  return match ? match[1] : null;
+}
+
+function updateUrl(eventSlug) {
+  if (eventSlug) {
+    history.pushState({ eventSlug }, '', `/event/${eventSlug}`);
+  } else {
+    history.pushState({}, '', '/');
+  }
+}
+
+// Handle browser back/forward
+window.addEventListener('popstate', (e) => {
+  if (e.state && e.state.eventSlug) {
+    viewEventBySlug(e.state.eventSlug, false);
+  } else {
+    showEventsList(false);
+  }
+});
+
 async function loadEvents() {
   const grid = document.getElementById('eventsGrid');
   if (!grid) return;
@@ -60,7 +84,7 @@ function createEventCard(event) {
   `;
 }
 
-async function viewEvent(eventId) {
+async function viewEvent(eventId, updateHistory = true) {
   try {
     const response = await fetch(`/api/events/${eventId}`, { credentials: 'include' });
     currentEvent = await response.json();
@@ -72,10 +96,18 @@ async function viewEvent(eventId) {
 
     window.scrollTo(0, 0);
 
+    // Update URL with event slug
+    if (updateHistory && currentEvent.slug) {
+      updateUrl(currentEvent.slug);
+    }
+
+    // Update page title
+    document.title = `${currentEvent.title} | Boardwave Events`;
+
     // Add back button event listener
     const backBtn = document.getElementById('backToEventsBtn');
     if (backBtn) {
-      backBtn.addEventListener('click', showEventsList);
+      backBtn.addEventListener('click', () => showEventsList(true));
     }
 
     if (window.isAdmin) {
@@ -84,6 +116,46 @@ async function viewEvent(eventId) {
   } catch (error) {
     console.error('Error loading event:', error);
     alert('Failed to load event');
+  }
+}
+
+async function viewEventBySlug(slug, updateHistory = true) {
+  try {
+    const response = await fetch(`/api/events/${slug}`, { credentials: 'include' });
+    if (!response.ok) {
+      // Event not found, show events list
+      showEventsList(true);
+      return;
+    }
+    currentEvent = await response.json();
+
+    renderEventView(currentEvent);
+
+    document.getElementById('eventsListView').style.display = 'none';
+    document.getElementById('eventView').style.display = 'block';
+
+    window.scrollTo(0, 0);
+
+    // Update URL with event slug
+    if (updateHistory && currentEvent.slug) {
+      updateUrl(currentEvent.slug);
+    }
+
+    // Update page title
+    document.title = `${currentEvent.title} | Boardwave Events`;
+
+    // Add back button event listener
+    const backBtn = document.getElementById('backToEventsBtn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => showEventsList(true));
+    }
+
+    if (window.isAdmin) {
+      addEventViewAdminButtons();
+    }
+  } catch (error) {
+    console.error('Error loading event:', error);
+    showEventsList(true);
   }
 }
 
@@ -292,10 +364,18 @@ function updateEventNavigation(event) {
   ).join('');
 }
 
-function showEventsList() {
+function showEventsList(updateHistory = true) {
   currentEvent = null;
   document.getElementById('eventsListView').style.display = 'block';
   document.getElementById('eventView').style.display = 'none';
+
+  // Update URL to home
+  if (updateHistory) {
+    updateUrl(null);
+  }
+
+  // Update page title
+  document.title = 'Boardwave Events';
 
   // Reset navigation
   document.getElementById('navMenu').innerHTML = '';
@@ -303,5 +383,12 @@ function showEventsList() {
   loadEvents();
 }
 
-// Initialize
-document.addEventListener('siteAccessGranted', loadEvents);
+// Initialize - check URL for direct event access
+document.addEventListener('siteAccessGranted', () => {
+  const eventSlug = getEventSlugFromUrl();
+  if (eventSlug) {
+    viewEventBySlug(eventSlug, false);
+  } else {
+    loadEvents();
+  }
+});
