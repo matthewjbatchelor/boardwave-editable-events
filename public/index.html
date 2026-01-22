@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boardwave Events</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Site Password Overlay -->
+    <div id="sitePasswordOverlay" class="overlay">
+        <div class="overlay-content">
+            <img src="/images/blackboardwave.png" alt="Boardwave" class="overlay-logo">
+            <h2>Enter Site Password</h2>
+            <form id="sitePasswordForm">
+                <input type="password" id="sitePassword" placeholder="Password" required>
+                <button type="submit" class="btn-primary">Enter</button>
+            </form>
+            <p id="sitePasswordError" class="error-text"></p>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content modal-small">
+            <span class="modal-close">&times;</span>
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <p id="loginError" class="error-text"></p>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-logo">
+                <a href="/">
+                    <img src="/images/whiteboardwave.png" alt="Boardwave" class="logo">
+                </a>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <!-- Dynamic navigation will be inserted here -->
+            </ul>
+            <div class="nav-actions">
+                <button id="loginBtn" class="btn-link">Login</button>
+                <span id="userInfo" class="user-info" style="display:none;">
+                    <span id="userName"></span>
+                    <button id="logoutBtn" class="btn-link">Logout</button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="mainContent">
+        <!-- Events List View (default) -->
+        <div id="eventsListView" class="events-list-view">
+            <div class="container">
+                <div class="events-header">
+                    <h1>Boardwave Events</h1>
+                    <button id="addEventBtn" class="btn-primary" style="display:none;">+ Add New Event</button>
+                </div>
+                <div id="eventsGrid" class="events-grid">
+                    <!-- Events will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Event View -->
+        <div id="eventView" class="event-view" style="display:none;">
+            <!-- Event content will be dynamically loaded here -->
+        </div>
+    </main>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content modal-large">
+            <span class="modal-close">&times;</span>
+            <h2 id="editModalTitle">Edit</h2>
+            <form id="editForm">
+                <div id="editFormFields">
+                    <!-- Form fields will be dynamically generated -->
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save</button>
+                    <button type="button" class="btn-cancel">Cancel</button>
+                    <button type="button" class="btn-delete" style="display:none;">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Boardwave. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/js/siteAccess.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/events.js"></script>
+    <script src="/js/admin.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

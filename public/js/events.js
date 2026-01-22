@@ -1,0 +1,301 @@
+// Events Management
+
+let currentEvent = null;
+
+async function loadEvents() {
+  const grid = document.getElementById('eventsGrid');
+  if (!grid) return;
+
+  grid.innerHTML = '<div class="loading">Loading events</div>';
+
+  try {
+    const response = await fetch('/api/events', { credentials: 'include' });
+    const events = await response.json();
+
+    if (events.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <p>No events yet.</p>
+          ${window.isAdmin ? '<p>Click "Add New Event" to create your first event.</p>' : ''}
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = events.map(event => createEventCard(event)).join('');
+
+    // Add click handlers
+    grid.querySelectorAll('.event-card').forEach(card => {
+      const eventId = card.dataset.eventId;
+      card.querySelector('.event-card-image').addEventListener('click', () => viewEvent(eventId));
+      card.querySelector('h3').addEventListener('click', () => viewEvent(eventId));
+    });
+
+    if (window.isAdmin) {
+      addEventCardAdminButtons();
+    }
+  } catch (error) {
+    console.error('Error loading events:', error);
+    grid.innerHTML = '<div class="error-text">Failed to load events</div>';
+  }
+}
+
+function createEventCard(event) {
+  const date = event.eventDate ? new Date(event.eventDate).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric'
+  }) : 'Date TBC';
+
+  return `
+    <div class="event-card" data-event-id="${event.id}">
+      <div class="event-card-image" style="${event.heroImage ? `background-image: url('/${event.heroImage}')` : ''}">
+        ${!event.isPublished ? '<span class="event-card-badge draft">Draft</span>' : ''}
+      </div>
+      <div class="event-card-content">
+        <h3>${event.title}</h3>
+        <div class="event-card-date">${date}</div>
+        <div class="event-card-location">${event.location || ''}</div>
+        <div class="event-card-actions admin-only" style="display:none;"></div>
+      </div>
+    </div>
+  `;
+}
+
+async function viewEvent(eventId) {
+  try {
+    const response = await fetch(`/api/events/${eventId}`, { credentials: 'include' });
+    currentEvent = await response.json();
+
+    renderEventView(currentEvent);
+
+    document.getElementById('eventsListView').style.display = 'none';
+    document.getElementById('eventView').style.display = 'block';
+
+    window.scrollTo(0, 0);
+
+    if (window.isAdmin) {
+      addEventViewAdminButtons();
+    }
+  } catch (error) {
+    console.error('Error loading event:', error);
+    alert('Failed to load event');
+  }
+}
+
+function renderEventView(event) {
+  const view = document.getElementById('eventView');
+
+  view.innerHTML = `
+    <button class="back-button" onclick="showEventsList()">Back to Events</button>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home" style="${event.heroImage ? `background-image: url('/${event.heroImage}')` : ''}">
+      <div class="hero-content">
+        <h1>${event.title}</h1>
+        ${event.subtitle ? `<p class="hero-details">${event.subtitle}</p>` : ''}
+      </div>
+    </section>
+
+    <!-- Event Description -->
+    <section id="event-description" class="section event-description">
+      <div class="container">
+        <div class="content-text">
+          ${event.description || '<p>Event description coming soon...</p>'}
+        </div>
+      </div>
+    </section>
+
+    <!-- Schedule -->
+    ${event.schedule && event.schedule.length > 0 ? `
+    <section id="schedule" class="section schedule">
+      <div class="container">
+        <h2>Welcome</h2>
+        ${event.welcomeMessage ? `<p class="welcome-text">${event.welcomeMessage}</p>` : ''}
+        <h3>Schedule</h3>
+        <div class="timeline">
+          ${event.schedule.map(item => `
+            <div class="timeline-item" data-id="${item.id}">
+              <div class="time">${item.time}</div>
+              <div class="description">${item.description}</div>
+            </div>
+          `).join('')}
+        </div>
+        ${event.signature ? `<p class="signature">${event.signature}</p>` : ''}
+      </div>
+    </section>
+    ` : ''}
+
+    <!-- Host -->
+    ${event.hosts && event.hosts.length > 0 ? `
+    <section id="host" class="section host">
+      <div class="container">
+        <h2>Introducing</h2>
+        <div class="section-header">HOST</div>
+        ${event.hosts.map(host => `
+          <div class="profile-card" data-id="${host.id}">
+            <div class="profile-image">
+              <img src="${host.image ? '/' + host.image : '/images/placeholder-profile.svg'}" alt="${host.name}">
+            </div>
+            <div class="profile-content">
+              <h3>${host.name}</h3>
+              <p class="profile-title">${host.title || ''}<br>${host.company || ''}</p>
+              <p class="profile-bio">${host.bio || ''}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+    ` : ''}
+
+    <!-- Speakers -->
+    ${event.speakers && event.speakers.length > 0 ? `
+    <section id="speakers" class="section speakers">
+      <div class="container">
+        <div class="section-header">SPEAKERS</div>
+        <div class="speakers-grid">
+          ${event.speakers.map(speaker => `
+            <div class="profile-card" data-id="${speaker.id}">
+              <div class="profile-image">
+                <img src="${speaker.image ? '/' + speaker.image : '/images/placeholder-profile.svg'}" alt="${speaker.name}">
+              </div>
+              <div class="profile-content">
+                <h3>${speaker.name}</h3>
+                <p class="profile-title">${speaker.title || ''}<br>${speaker.company || ''}</p>
+                <p class="profile-bio">${speaker.bio || ''}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+    ` : ''}
+
+    <!-- Guests -->
+    ${event.guests && event.guests.length > 0 ? `
+    <section id="guests" class="section guests">
+      <div class="container">
+        <div class="section-header">GUESTS</div>
+        <div class="guests-grid">
+          ${event.guests.map(guest => `
+            <div class="guest-card" data-id="${guest.id}">
+              ${guest.badge ? `<div class="guest-badge">${guest.badge}</div>` : ''}
+              <div class="profile-image">
+                <img src="${guest.image ? '/' + guest.image : '/images/placeholder-profile.svg'}" alt="${guest.name}" onerror="this.src='/images/placeholder-profile.svg'">
+              </div>
+              <h3>${guest.name}</h3>
+              <p class="profile-title">${guest.title || ''}<br>${guest.company || ''}</p>
+              ${guest.bio ? `<p class="profile-bio">${guest.bio}</p>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+    ` : ''}
+
+    <!-- Event Connect -->
+    ${event.connectIntro || event.connectInstructions ? `
+    <section id="event-connect" class="section event-connect">
+      <div class="container">
+        <h2>Event Connect</h2>
+        <div class="connect-content">
+          ${event.connectIntro ? `<p class="connect-intro">${event.connectIntro}</p>` : ''}
+          ${event.connectInstructions ? `<p class="connect-instructions">${event.connectInstructions}</p>` : ''}
+        </div>
+      </div>
+    </section>
+    ` : ''}
+
+    <!-- Event Partner -->
+    ${event.partnerName ? `
+    <section id="event-partner" class="section event-partner">
+      <div class="container">
+        <h2>Introducing our Event Partner</h2>
+        ${event.partnerLogo ? `<div class="partner-logo"><img src="/${event.partnerLogo}" alt="${event.partnerName}"></div>` : ''}
+        <div class="partner-content">
+          ${event.partnerDescription || ''}
+        </div>
+        ${event.partnerWebsite ? `<p class="partner-link"><a href="${event.partnerWebsite}" target="_blank">${event.partnerWebsite.replace(/^https?:\/\//, '')}</a></p>` : ''}
+
+        ${event.testimonialText ? `
+        <div class="testimonial">
+          <blockquote>
+            <p>${event.testimonialText}</p>
+            ${event.testimonialAuthor ? `
+            <footer>
+              <strong>${event.testimonialAuthor}</strong><br>
+              ${event.testimonialTitle || ''}<br>
+              ${event.testimonialCompany || ''}
+            </footer>
+            ` : ''}
+          </blockquote>
+        </div>
+        ` : ''}
+      </div>
+    </section>
+    ` : ''}
+
+    <!-- Contact -->
+    ${event.contactName || event.contactEmail ? `
+    <section id="contact" class="section contact">
+      <div class="container">
+        <div class="contact-content">
+          <img src="/images/blackboardwave.png" alt="Boardwave" class="contact-logo">
+          <h2>Contact us:</h2>
+          <div class="contact-details">
+            ${event.contactName ? `<p><strong>${event.contactName}</strong></p>` : ''}
+            ${event.contactTitle ? `<p>${event.contactTitle}</p>` : ''}
+            ${event.contactEmail ? `<p><a href="mailto:${event.contactEmail}">${event.contactEmail}</a></p>` : ''}
+            ${event.contactPhone ? `<p><a href="tel:${event.contactPhone}">${event.contactPhone}</a></p>` : ''}
+          </div>
+        </div>
+      </div>
+    </section>
+    ` : ''}
+  `;
+
+  // Update navigation
+  updateEventNavigation(event);
+}
+
+function updateEventNavigation(event) {
+  const navMenu = document.getElementById('navMenu');
+  if (!navMenu) return;
+
+  const sections = ['home', 'event-description'];
+  if (event.schedule?.length) sections.push('schedule');
+  if (event.hosts?.length) sections.push('host');
+  if (event.speakers?.length) sections.push('speakers');
+  if (event.guests?.length) sections.push('guests');
+  if (event.connectIntro) sections.push('event-connect');
+  if (event.partnerName) sections.push('event-partner');
+  if (event.contactName || event.contactEmail) sections.push('contact');
+
+  const labels = {
+    'home': 'Home',
+    'event-description': 'Event',
+    'schedule': 'Schedule',
+    'host': 'Host',
+    'speakers': 'Speakers',
+    'guests': 'Guests',
+    'event-connect': 'Connect',
+    'event-partner': 'Partner',
+    'contact': 'Contact'
+  };
+
+  navMenu.innerHTML = sections.map(id =>
+    `<li><a href="#${id}">${labels[id]}</a></li>`
+  ).join('');
+}
+
+function showEventsList() {
+  currentEvent = null;
+  document.getElementById('eventsListView').style.display = 'block';
+  document.getElementById('eventView').style.display = 'none';
+
+  // Reset navigation
+  document.getElementById('navMenu').innerHTML = '';
+
+  loadEvents();
+}
+
+// Initialize
+document.addEventListener('siteAccessGranted', loadEvents);
