@@ -72,6 +72,12 @@ async function viewEvent(eventId) {
 
     window.scrollTo(0, 0);
 
+    // Add back button event listener
+    const backBtn = document.getElementById('backToEventsBtn');
+    if (backBtn) {
+      backBtn.addEventListener('click', showEventsList);
+    }
+
     if (window.isAdmin) {
       addEventViewAdminButtons();
     }
@@ -85,7 +91,7 @@ function renderEventView(event) {
   const view = document.getElementById('eventView');
 
   view.innerHTML = `
-    <button class="back-button" onclick="showEventsList()">Back to Events</button>
+    <button class="back-button" id="backToEventsBtn">← Back to Events</button>
 
     <!-- Hero Section -->
     <section class="hero" id="home" style="${event.heroImage ? `background-image: url('/${event.heroImage}')` : ''}">

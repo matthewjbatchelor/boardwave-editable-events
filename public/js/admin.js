@@ -28,10 +28,24 @@ function addEventCardAdminButtons() {
       const eventId = card.dataset.eventId;
       actions.style.display = 'flex';
       actions.innerHTML = `
-        <button class="btn-edit" onclick="event.stopPropagation(); showEventForm(${eventId})">Edit</button>
-        <button class="btn-secondary" onclick="event.stopPropagation(); duplicateEvent(${eventId})">Duplicate</button>
-        <button class="btn-delete" onclick="event.stopPropagation(); deleteEvent(${eventId})">Delete</button>
+        <button class="btn-edit" data-action="edit">Edit</button>
+        <button class="btn-secondary" data-action="duplicate">Duplicate</button>
+        <button class="btn-delete" data-action="delete">Delete</button>
       `;
+
+      // Add event listeners
+      actions.querySelector('[data-action="edit"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        showEventForm(eventId);
+      });
+      actions.querySelector('[data-action="duplicate"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        duplicateEvent(eventId);
+      });
+      actions.querySelector('[data-action="delete"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteEvent(eventId);
+      });
     }
   });
 }
