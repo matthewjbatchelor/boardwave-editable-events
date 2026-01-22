@@ -262,16 +262,6 @@ async function initializeDatabase() {
       console.log('Admin user created');
     }
 
-    const viewerExists = await User.findByUsername(process.env.VIEWER_USERNAME || 'viewer');
-    if (!viewerExists) {
-      await User.create(
-        process.env.VIEWER_USERNAME || 'viewer',
-        process.env.VIEWER_PASSWORD || 'viewer123',
-        'viewer'
-      );
-      console.log('Viewer user created');
-    }
-
     // Set default site password
     const sitePasswordResult = await query(
       "SELECT value FROM site_settings WHERE key = 'site_password'"
@@ -298,10 +288,7 @@ async function startServer() {
   app.listen(PORT, () => {
     console.log(`\nServer running on http://localhost:${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`\nLogin credentials:`);
-    console.log(`  Admin: ${process.env.ADMIN_USERNAME || 'admin'} / ${process.env.ADMIN_PASSWORD || 'admin123'}`);
-    console.log(`  Viewer: ${process.env.VIEWER_USERNAME || 'viewer'} / ${process.env.VIEWER_PASSWORD || 'viewer123'}`);
-    console.log(`  Site password: B04rdw4ve!`);
+    console.log(`\nAdmin login: ${process.env.ADMIN_USERNAME || 'admin'} / ${process.env.ADMIN_PASSWORD || 'admin123'}`);
     console.log(`\nPress Ctrl+C to stop\n`);
   });
 }
