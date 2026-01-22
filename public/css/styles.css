@@ -1397,6 +1397,8 @@ a:hover {
     padding: 60px 20px;
     max-width: 600px;
     margin: 0 auto;
+    grid-column: 1 / -1;
+    width: 100%;
 }
 
 .no-access-message h2 {
