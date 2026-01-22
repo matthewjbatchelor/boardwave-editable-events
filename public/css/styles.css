@@ -758,18 +758,44 @@ a:hover {
 }
 
 .guests-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 20px 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-gold) var(--bg-light);
+}
+
+.guests-grid::-webkit-scrollbar {
+    height: 8px;
+}
+
+.guests-grid::-webkit-scrollbar-track {
+    background: var(--bg-light);
+    border-radius: 4px;
+}
+
+.guests-grid::-webkit-scrollbar-thumb {
+    background: var(--primary-gold);
+    border-radius: 4px;
+}
+
+.guests-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-gold);
 }
 
 .guest-card {
+    flex: 0 0 280px;
+    min-width: 280px;
     background-color: var(--bg-white);
     border-radius: 10px;
     padding: 30px;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
+    scroll-snap-align: start;
 }
 
 .guest-card:hover {
@@ -1156,7 +1182,13 @@ a:hover {
     }
 
     .guests-grid {
-        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .guest-card {
+        flex: 0 0 250px;
+        min-width: 250px;
+        padding: 20px;
     }
 
     .events-grid {
