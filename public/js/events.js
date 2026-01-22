@@ -329,6 +329,10 @@ function renderEventView(event) {
           </blockquote>
         </div>
         ` : ''}
+
+        <div class="partner-hero-image">
+          <img src="/images/hero-background.png" alt="Event">
+        </div>
       </div>
     </section>
     ` : ''}

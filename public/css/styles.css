@@ -1046,6 +1046,19 @@ a:hover {
     margin-top: 30px;
 }
 
+.partner-hero-image {
+    margin-top: 60px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.partner-hero-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+}
+
 /* Contact */
 .contact {
     background-color: var(--primary-dark);
