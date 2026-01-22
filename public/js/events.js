@@ -252,18 +252,27 @@ function renderEventView(event) {
     <section id="guests" class="section guests">
       <div class="container">
         <div class="section-header">GUESTS</div>
-        <div class="guests-grid">
-          ${event.guests.map(guest => `
-            <div class="guest-card" data-id="${guest.id}">
-              ${guest.badge ? `<div class="guest-badge">${guest.badge}</div>` : ''}
-              <div class="profile-image">
-                <img src="${guest.image ? '/' + guest.image : '/images/placeholder-profile.svg'}" alt="${guest.name}" onerror="this.src='/images/placeholder-profile.svg'">
+        <div class="guests-scroll-hint">
+          <span>Scroll to see all ${event.guests.length} guests →</span>
+          <div class="scroll-arrows">
+            <button class="scroll-arrow" id="guestsScrollLeft" aria-label="Scroll left">←</button>
+            <button class="scroll-arrow" id="guestsScrollRight" aria-label="Scroll right">→</button>
+          </div>
+        </div>
+        <div class="guests-scroll-container">
+          <div class="guests-grid" id="guestsGrid">
+            ${event.guests.map(guest => `
+              <div class="guest-card" data-id="${guest.id}">
+                ${guest.badge ? `<div class="guest-badge">${guest.badge}</div>` : ''}
+                <div class="profile-image">
+                  <img src="${guest.image ? '/' + guest.image : '/images/placeholder-profile.svg'}" alt="${guest.name}" onerror="this.src='/images/placeholder-profile.svg'">
+                </div>
+                <h3>${guest.name}</h3>
+                <p class="profile-title">${guest.title || ''}<br>${guest.company || ''}</p>
+                ${guest.bio ? `<p class="profile-bio">${guest.bio}</p>` : ''}
               </div>
-              <h3>${guest.name}</h3>
-              <p class="profile-title">${guest.title || ''}<br>${guest.company || ''}</p>
-              ${guest.bio ? `<p class="profile-bio">${guest.bio}</p>` : ''}
-            </div>
-          `).join('')}
+            `).join('')}
+          </div>
         </div>
       </div>
     </section>
@@ -332,6 +341,36 @@ function renderEventView(event) {
 
   // Update navigation
   updateEventNavigation(event);
+
+  // Setup guests scroll arrows
+  setupGuestsScroll();
+}
+
+function setupGuestsScroll() {
+  const grid = document.getElementById('guestsGrid');
+  const leftBtn = document.getElementById('guestsScrollLeft');
+  const rightBtn = document.getElementById('guestsScrollRight');
+
+  if (!grid || !leftBtn || !rightBtn) return;
+
+  const scrollAmount = 300;
+
+  leftBtn.addEventListener('click', () => {
+    grid.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  });
+
+  rightBtn.addEventListener('click', () => {
+    grid.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  });
+
+  // Update button states on scroll
+  const updateButtons = () => {
+    leftBtn.disabled = grid.scrollLeft <= 0;
+    rightBtn.disabled = grid.scrollLeft >= grid.scrollWidth - grid.clientWidth - 5;
+  };
+
+  grid.addEventListener('scroll', updateButtons);
+  updateButtons();
 }
 
 function updateEventNavigation(event) {

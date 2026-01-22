@@ -757,6 +757,65 @@ a:hover {
     background-color: var(--bg-light);
 }
 
+/* Guests scroll container wrapper */
+.guests-scroll-container {
+    position: relative;
+}
+
+.guests-scroll-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: calc(100% - 8px);
+    background: linear-gradient(to right, transparent, var(--bg-light));
+    pointer-events: none;
+    z-index: 1;
+}
+
+.guests-scroll-hint {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.guests-scroll-hint span {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+}
+
+.scroll-arrows {
+    display: flex;
+    gap: 10px;
+}
+
+.scroll-arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-white);
+    border: 1px solid var(--primary-gold);
+    color: var(--primary-gold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.scroll-arrow:hover {
+    background: var(--primary-gold);
+    color: var(--text-light);
+}
+
+.scroll-arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
 .guests-grid {
     display: flex;
     overflow-x: auto;
@@ -766,6 +825,7 @@ a:hover {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: var(--primary-gold) var(--bg-light);
+    scroll-behavior: smooth;
 }
 
 .guests-grid::-webkit-scrollbar {
