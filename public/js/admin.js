@@ -221,6 +221,11 @@ async function showEventForm(eventId) {
         <input type="text" id="partnerName" value="${event?.partnerName || ''}">
       </div>
       <div class="form-group">
+        <label for="partnerLogo">Partner Logo Path</label>
+        <input type="text" id="partnerLogo" value="${event?.partnerLogo || ''}" placeholder="images/eventpartner.png">
+        <small class="form-hint">Logo will appear in the hero area and Event Partner section</small>
+      </div>
+      <div class="form-group">
         <label for="partnerDescription">Partner Description (HTML)</label>
         <textarea id="partnerDescription" rows="4">${event?.partnerDescription || ''}</textarea>
       </div>
@@ -293,6 +298,7 @@ async function saveEvent(eventId) {
     contactEmail: document.getElementById('contactEmail').value,
     contactPhone: document.getElementById('contactPhone').value,
     partnerName: document.getElementById('partnerName').value,
+    partnerLogo: document.getElementById('partnerLogo').value,
     partnerDescription: document.getElementById('partnerDescription').value,
     partnerWebsite: document.getElementById('partnerWebsite').value,
     testimonialText: document.getElementById('testimonialText').value,

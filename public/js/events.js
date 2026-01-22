@@ -166,10 +166,11 @@ function renderEventView(event) {
     ${window.isAdmin ? '<button class="back-button" id="backToEventsBtn">← Back to Events</button>' : ''}
 
     <!-- Hero Section -->
-    <section class="hero" id="home" style="${event.heroImage ? `background-image: url('/${event.heroImage}')` : ''}">
+    <section class="hero" id="home" style="background-image: url('${event.heroImage ? '/' + event.heroImage : '/images/hero-background.png'}')">
       <div class="hero-content">
         <h1>${event.title}</h1>
         ${event.subtitle ? `<p class="hero-details">${event.subtitle}</p>` : ''}
+        ${event.partnerLogo ? `<div class="hero-partner"><span>In partnership with</span><img src="/${event.partnerLogo}" alt="${event.partnerName || 'Event Partner'}"></div>` : ''}
       </div>
     </section>
 
@@ -186,18 +187,25 @@ function renderEventView(event) {
     ${event.schedule && event.schedule.length > 0 ? `
     <section id="schedule" class="section schedule">
       <div class="container">
-        <h2>Welcome</h2>
-        ${event.welcomeMessage ? `<p class="welcome-text">${event.welcomeMessage}</p>` : ''}
-        <h3>Schedule</h3>
-        <div class="timeline">
-          ${event.schedule.map(item => `
-            <div class="timeline-item" data-id="${item.id}">
-              <div class="time">${item.time}</div>
-              <div class="description">${item.description}</div>
+        <div class="schedule-grid">
+          <div class="schedule-image">
+            <img src="/images/networking-photo.jpg" alt="Networking">
+          </div>
+          <div class="schedule-content">
+            <h2>Welcome</h2>
+            ${event.welcomeMessage ? `<p class="welcome-text">${event.welcomeMessage}</p>` : ''}
+            <h3>Timings for the evening will be as follows:</h3>
+            <div class="timeline">
+              ${event.schedule.map(item => `
+                <div class="timeline-item" data-id="${item.id}">
+                  <div class="time">${item.time}</div>
+                  <div class="description">${item.description}</div>
+                </div>
+              `).join('')}
             </div>
-          `).join('')}
+            ${event.signature ? `<p class="signature">${event.signature}</p>` : ''}
+          </div>
         </div>
-        ${event.signature ? `<p class="signature">${event.signature}</p>` : ''}
       </div>
     </section>
     ` : ''}
@@ -283,9 +291,14 @@ function renderEventView(event) {
     <section id="event-connect" class="section event-connect">
       <div class="container">
         <h2>Event Connect</h2>
-        <div class="connect-content">
-          ${event.connectIntro ? `<p class="connect-intro">${event.connectIntro}</p>` : ''}
-          ${event.connectInstructions ? `<p class="connect-instructions">${event.connectInstructions}</p>` : ''}
+        <div class="connect-grid">
+          <div class="connect-content">
+            ${event.connectIntro ? `<p class="connect-intro">${event.connectIntro}</p>` : ''}
+            ${event.connectInstructions ? `<p class="connect-instructions">${event.connectInstructions}</p>` : ''}
+          </div>
+          <div class="connect-image">
+            <img src="/images/event-connect-platform.jpg" alt="Event Connect Platform">
+          </div>
         </div>
       </div>
     </section>
