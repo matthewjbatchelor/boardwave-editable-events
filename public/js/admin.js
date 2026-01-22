@@ -53,13 +53,15 @@ function addEventCardAdminButtons() {
 function addEventViewAdminButtons() {
   if (!currentEvent) return;
 
+  const eventId = currentEvent.id;
+
   // Add edit button to hero
   const hero = document.querySelector('.hero');
   if (hero && !hero.querySelector('.btn-edit')) {
     const btn = document.createElement('button');
     btn.className = 'btn-edit hero-edit-btn';
     btn.textContent = 'Edit Event';
-    btn.onclick = () => showEventForm(currentEvent.id);
+    btn.addEventListener('click', () => showEventForm(eventId));
     hero.appendChild(btn);
   }
 
