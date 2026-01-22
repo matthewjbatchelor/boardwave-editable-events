@@ -379,11 +379,15 @@ function setupGuestsScroll() {
   // Update button states on scroll
   const updateButtons = () => {
     leftBtn.disabled = grid.scrollLeft <= 0;
-    rightBtn.disabled = grid.scrollLeft >= grid.scrollWidth - grid.clientWidth - 5;
+    const canScrollRight = grid.scrollWidth > grid.clientWidth &&
+                           grid.scrollLeft < grid.scrollWidth - grid.clientWidth - 5;
+    rightBtn.disabled = !canScrollRight;
   };
 
   grid.addEventListener('scroll', updateButtons);
-  updateButtons();
+
+  // Delay initial update to ensure DOM is fully rendered
+  setTimeout(updateButtons, 100);
 }
 
 function updateEventNavigation(event) {
