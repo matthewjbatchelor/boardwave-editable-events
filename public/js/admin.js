@@ -419,7 +419,13 @@ async function showPersonForm(type, personId) {
     </div>
     <div class="form-group">
       <label for="personImage">Image Path</label>
-      <input type="text" id="personImage" value="${person?.image || ''}" placeholder="images/guests/name.jpg">
+      <input type="text" id="personImage" value="${person?.image || ''}" placeholder="images/guests/name.jpg" ${!person?.image ? 'disabled' : ''}>
+      <div class="form-checkbox">
+        <label>
+          <input type="checkbox" id="usePlaceholder" ${!person?.image ? 'checked' : ''}>
+          Use placeholder image (no photo available)
+        </label>
+      </div>
     </div>
     ${type === 'guest' ? `
     <div class="form-group">
@@ -446,18 +452,35 @@ async function showPersonForm(type, personId) {
     deleteBtn.onclick = () => deletePerson(type, person?.id);
   }
 
+  // Handle placeholder checkbox
+  const placeholderCheckbox = document.getElementById('usePlaceholder');
+  const imageInput = document.getElementById('personImage');
+  if (placeholderCheckbox && imageInput) {
+    placeholderCheckbox.addEventListener('change', () => {
+      if (placeholderCheckbox.checked) {
+        imageInput.disabled = true;
+        imageInput.value = '';
+      } else {
+        imageInput.disabled = false;
+        imageInput.focus();
+      }
+    });
+  }
+
   modal.classList.add('active');
   setupModalClose(modal);
 }
 
 async function savePerson(type, personId) {
+  const usePlaceholder = document.getElementById('usePlaceholder')?.checked;
+
   const data = {
     eventId: currentEvent.id,
     name: document.getElementById('personName').value,
     title: document.getElementById('personTitle').value,
     company: document.getElementById('personCompany').value,
     bio: document.getElementById('personBio').value,
-    image: document.getElementById('personImage').value,
+    image: usePlaceholder ? null : document.getElementById('personImage').value,
     sortOrder: parseInt(document.getElementById('personSort').value) || 0
   };
 
