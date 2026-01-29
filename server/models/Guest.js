@@ -3,7 +3,7 @@ const { query } = require('../config/database');
 class Guest {
   static async findByEventId(eventId) {
     const result = await query(
-      'SELECT * FROM guests WHERE event_id = $1 ORDER BY sort_order ASC, name ASC',
+      `SELECT * FROM guests WHERE event_id = $1 ORDER BY substring(name from '([^ ]+)$') ASC, name ASC`,
       [eventId]
     );
     return result.rows.map(this.deserialize);
