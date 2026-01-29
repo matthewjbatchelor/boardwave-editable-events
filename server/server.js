@@ -176,6 +176,34 @@ async function initializeDatabase() {
       // Columns may already exist
     }
 
+    // Populate default values for new fields on existing events
+    try {
+      // Set default images for events that don't have them
+      await query(`UPDATE events SET description_image = 'images/event-photo-1.jpg' WHERE description_image IS NULL OR description_image = ''`);
+      await query(`UPDATE events SET schedule_heading = 'Welcome' WHERE schedule_heading IS NULL OR schedule_heading = ''`);
+      await query(`UPDATE events SET schedule_image = 'images/networking-photo.jpg' WHERE schedule_image IS NULL OR schedule_image = ''`);
+      await query(`UPDATE events SET partner_hero_image = 'images/panel-discussion.jpg' WHERE partner_hero_image IS NULL OR partner_hero_image = ''`);
+
+      // Build agenda content from existing schedule items for events that don't have it
+      const eventsWithoutAgenda = await query(`SELECT id FROM events WHERE agenda_content IS NULL OR agenda_content = ''`);
+      for (const event of eventsWithoutAgenda.rows) {
+        const scheduleItems = await query(
+          `SELECT time, description FROM schedule_items WHERE event_id = $1 ORDER BY sort_order, id`,
+          [event.id]
+        );
+        if (scheduleItems.rows.length > 0) {
+          const agendaHtml = '<p><strong>Timings for the evening will be as follows:</strong></p>\n' +
+            scheduleItems.rows.map(item =>
+              `<p><strong>${item.time}</strong> – ${item.description}</p>`
+            ).join('\n');
+          await query(`UPDATE events SET agenda_content = $1 WHERE id = $2`, [agendaHtml, event.id]);
+        }
+      }
+      console.log('Populated default values for new event fields');
+    } catch (e) {
+      console.log('Migration for default values already applied or error:', e.message);
+    }
+
     // Create guests table
     await query(`
       CREATE TABLE IF NOT EXISTS guests (
