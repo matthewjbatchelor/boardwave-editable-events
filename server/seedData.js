@@ -20,6 +20,7 @@ const seedEvent = {
       <li><strong>Lessons from large-scale deployment:</strong> Invisible has trained 80% of the world's leading LLMs and built systems that work in complex enterprise environments. Guillaume will share lessons from deploying AI at scale, including overcoming fragmented systems, legacy infrastructure, and adoption challenges.</li>
     </ul>
   `,
+  descriptionImage: "images/event-photo-1.jpg",
   scheduleHeading: "Welcome",
   scheduleIntro: "Timings for the evening will be as follows:",
   scheduleImage: "images/networking-photo.jpg",

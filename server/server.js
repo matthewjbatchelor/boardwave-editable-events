@@ -133,6 +133,7 @@ async function initializeDatabase() {
         venue TEXT,
         hero_image TEXT,
         description TEXT,
+        description_image TEXT,
         schedule_heading TEXT,
         schedule_intro TEXT,
         schedule_image TEXT,
@@ -162,8 +163,9 @@ async function initializeDatabase() {
       );
     `);
 
-    // Add new columns for schedule section (for existing databases)
+    // Add new columns for editable sections (for existing databases)
     try {
+      await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS description_image TEXT`);
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_heading TEXT`);
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_intro TEXT`);
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_image TEXT`);

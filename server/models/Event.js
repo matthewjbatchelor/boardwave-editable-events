@@ -21,7 +21,7 @@ class Event {
     const result = await query(
       `INSERT INTO events (
         title, slug, subtitle, event_date, event_time, location, venue,
-        hero_image, description, schedule_heading, schedule_intro, schedule_image, welcome_message, signature,
+        hero_image, description, description_image, schedule_heading, schedule_intro, schedule_image, welcome_message, signature,
         contact_name, contact_title, contact_email, contact_phone,
         partner_name, partner_logo, partner_description, partner_website,
         testimonial_text, testimonial_author, testimonial_title, testimonial_company, testimonial_image,
@@ -29,12 +29,13 @@ class Event {
         is_published
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,
-        $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33
+        $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34
       ) RETURNING *`,
       [
         serialized.title, serialized.slug, serialized.subtitle,
         serialized.event_date, serialized.event_time, serialized.location, serialized.venue,
-        serialized.hero_image, serialized.description, serialized.schedule_heading, serialized.schedule_intro,
+        serialized.hero_image, serialized.description, serialized.description_image,
+        serialized.schedule_heading, serialized.schedule_intro,
         serialized.schedule_image, serialized.welcome_message, serialized.signature,
         serialized.contact_name, serialized.contact_title, serialized.contact_email, serialized.contact_phone,
         serialized.partner_name, serialized.partner_logo, serialized.partner_description, serialized.partner_website,
@@ -53,21 +54,23 @@ class Event {
       `UPDATE events SET
         title = $1, slug = $2, subtitle = $3,
         event_date = $4, event_time = $5, location = $6, venue = $7,
-        hero_image = $8, description = $9, schedule_heading = $10, schedule_intro = $11,
-        schedule_image = $12, welcome_message = $13, signature = $14,
-        contact_name = $15, contact_title = $16, contact_email = $17, contact_phone = $18,
-        partner_name = $19, partner_logo = $20, partner_description = $21, partner_website = $22,
-        testimonial_text = $23, testimonial_author = $24, testimonial_title = $25,
-        testimonial_company = $26, testimonial_image = $27, partner_hero_image = $28,
-        connect_intro = $29, connect_instructions = $30, connect_link = $31, connect_image = $32,
-        is_published = $33,
+        hero_image = $8, description = $9, description_image = $10,
+        schedule_heading = $11, schedule_intro = $12,
+        schedule_image = $13, welcome_message = $14, signature = $15,
+        contact_name = $16, contact_title = $17, contact_email = $18, contact_phone = $19,
+        partner_name = $20, partner_logo = $21, partner_description = $22, partner_website = $23,
+        testimonial_text = $24, testimonial_author = $25, testimonial_title = $26,
+        testimonial_company = $27, testimonial_image = $28, partner_hero_image = $29,
+        connect_intro = $30, connect_instructions = $31, connect_link = $32, connect_image = $33,
+        is_published = $34,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $34
+      WHERE id = $35
       RETURNING *`,
       [
         serialized.title, serialized.slug, serialized.subtitle,
         serialized.event_date, serialized.event_time, serialized.location, serialized.venue,
-        serialized.hero_image, serialized.description, serialized.schedule_heading, serialized.schedule_intro,
+        serialized.hero_image, serialized.description, serialized.description_image,
+        serialized.schedule_heading, serialized.schedule_intro,
         serialized.schedule_image, serialized.welcome_message, serialized.signature,
         serialized.contact_name, serialized.contact_title, serialized.contact_email, serialized.contact_phone,
         serialized.partner_name, serialized.partner_logo, serialized.partner_description, serialized.partner_website,
@@ -102,6 +105,7 @@ class Event {
       venue: event.venue || '',
       hero_image: event.heroImage || '',
       description: event.description || '',
+      description_image: event.descriptionImage || '',
       schedule_heading: event.scheduleHeading || '',
       schedule_intro: event.scheduleIntro || '',
       schedule_image: event.scheduleImage || '',
@@ -141,6 +145,7 @@ class Event {
       venue: row.venue,
       heroImage: row.hero_image,
       description: row.description,
+      descriptionImage: row.description_image,
       scheduleHeading: row.schedule_heading,
       scheduleIntro: row.schedule_intro,
       scheduleImage: row.schedule_image,

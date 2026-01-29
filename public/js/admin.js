@@ -237,6 +237,12 @@ async function showEventForm(eventId) {
         <input type="hidden" id="eventDescription">
       </div>
       <div class="form-group">
+        <label for="descriptionImageUpload">Description Section Image</label>
+        <input type="file" id="descriptionImageUpload" accept="image/*" class="image-upload-input">
+        <div id="descriptionImagePreview" class="image-preview"></div>
+        <small class="form-hint">Image displayed to the right of the event description</small>
+      </div>
+      <div class="form-group">
         <label>
           <input type="checkbox" id="eventPublished" ${event?.isPublished ? 'checked' : ''}>
           Published
@@ -383,6 +389,7 @@ async function showEventForm(eventId) {
   setTimeout(() => {
     initializeEventEditors(event);
     // Setup image uploads
+    setupImageUpload('descriptionImageUpload', 'descriptionImagePreview', event ? event.descriptionImage : 'images/event-photo-1.jpg');
     setupImageUpload('partnerLogoUpload', 'partnerLogoPreview', event ? event.partnerLogo : '');
     setupImageUpload('scheduleImageUpload', 'scheduleImagePreview', event ? event.scheduleImage : 'images/networking-photo.jpg');
     setupImageUpload('partnerHeroImageUpload', 'partnerHeroImagePreview', event ? event.partnerHeroImage : 'images/panel-discussion.jpg');
@@ -475,6 +482,7 @@ async function saveEvent(eventId) {
   };
 
   // Handle image uploads
+  const descriptionImage = await getImageValue('descriptionImageUpload', 'descriptionImagePreview');
   const partnerLogo = await getImageValue('partnerLogoUpload', 'partnerLogoPreview');
   const scheduleImage = await getImageValue('scheduleImageUpload', 'scheduleImagePreview');
   const partnerHeroImage = await getImageValue('partnerHeroImageUpload', 'partnerHeroImagePreview');
@@ -485,6 +493,7 @@ async function saveEvent(eventId) {
     eventDate: document.getElementById('eventDate').value || null,
     location: document.getElementById('eventLocation').value,
     description: getEditorContent(window.descriptionEditor),
+    descriptionImage: descriptionImage,
     isPublished: document.getElementById('eventPublished').checked,
     scheduleHeading: getEditorContent(window.scheduleHeadingEditor),
     scheduleIntro: getEditorContent(window.scheduleIntroEditor),

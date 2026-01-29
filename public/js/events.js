@@ -192,8 +192,15 @@ function renderEventView(event) {
     <!-- Event Description -->
     <section id="event-description" class="section event-description">
       <div class="container">
-        <div class="content-text">
-          ${event.description || '<p>Event description coming soon...</p>'}
+        <div class="content-grid">
+          <div class="content-text">
+            ${event.description || '<p>Event description coming soon...</p>'}
+          </div>
+          ${event.descriptionImage ? `
+          <div class="content-image">
+            <img src="/${event.descriptionImage}" alt="Event">
+          </div>
+          ` : ''}
         </div>
       </div>
     </section>
