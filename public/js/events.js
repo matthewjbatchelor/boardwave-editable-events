@@ -237,12 +237,12 @@ function renderEventView(event) {
     ` : ''}
 
     <!-- Host -->
-    ${event.hosts && event.hosts.length > 0 ? `
+    ${(event.hosts && event.hosts.length > 0) || window.isAdmin ? `
     <section id="host" class="section host">
       <div class="container">
         <h2>Introducing</h2>
         <div class="section-header">HOST</div>
-        ${event.hosts.map(host => `
+        ${event.hosts && event.hosts.length > 0 ? event.hosts.map(host => `
           <div class="profile-card" data-id="${host.id}">
             <div class="profile-image">
               <img src="${host.image ? '/' + host.image : '/images/placeholder-profile.svg'}" alt="${host.name}">
@@ -253,16 +253,17 @@ function renderEventView(event) {
               <p class="profile-bio">${host.bio || ''}</p>
             </div>
           </div>
-        `).join('')}
+        `).join('') : '<p class="empty-section-message">No host added yet. Click "Add Host" to add one.</p>'}
       </div>
     </section>
     ` : ''}
 
     <!-- Speakers -->
-    ${event.speakers && event.speakers.length > 0 ? `
+    ${(event.speakers && event.speakers.length > 0) || window.isAdmin ? `
     <section id="speakers" class="section speakers">
       <div class="container">
         <div class="section-header">SPEAKERS</div>
+        ${event.speakers && event.speakers.length > 0 ? `
         <div class="speakers-grid">
           ${event.speakers.map(speaker => `
             <div class="profile-card" data-id="${speaker.id}">
@@ -277,15 +278,17 @@ function renderEventView(event) {
             </div>
           `).join('')}
         </div>
+        ` : '<p class="empty-section-message">No speakers added yet. Click "Add Speaker" to add one.</p>'}
       </div>
     </section>
     ` : ''}
 
     <!-- Guests -->
-    ${event.guests && event.guests.length > 0 ? `
+    ${(event.guests && event.guests.length > 0) || window.isAdmin ? `
     <section id="guests" class="section guests">
       <div class="container">
         <div class="section-header">GUESTS</div>
+        ${event.guests && event.guests.length > 0 ? `
         <div class="guests-scroll-hint">
           <span>Scroll to see all ${event.guests.length} guests →</span>
           <div class="scroll-arrows">
@@ -308,6 +311,7 @@ function renderEventView(event) {
             `).join('')}
           </div>
         </div>
+        ` : '<p class="empty-section-message">No guests added yet. Click "Add Guest" to add one.</p>'}
       </div>
     </section>
     ` : ''}
@@ -426,9 +430,9 @@ function updateEventNavigation(event) {
 
   const sections = ['home', 'event-description'];
   if (event.agendaContent || event.schedule?.length) sections.push('schedule');
-  if (event.hosts?.length) sections.push('host');
-  if (event.speakers?.length) sections.push('speakers');
-  if (event.guests?.length) sections.push('guests');
+  if (event.hosts?.length || window.isAdmin) sections.push('host');
+  if (event.speakers?.length || window.isAdmin) sections.push('speakers');
+  if (event.guests?.length || window.isAdmin) sections.push('guests');
   if (event.connectIntro) sections.push('event-connect');
   if (event.partnerName) sections.push('event-partner');
   if (event.contactName || event.contactEmail) sections.push('contact');

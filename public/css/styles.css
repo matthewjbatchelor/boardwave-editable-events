@@ -641,6 +641,13 @@ a:hover {
     right: 20px;
 }
 
+.empty-section-message {
+    text-align: center;
+    color: var(--text-gray);
+    font-style: italic;
+    padding: 40px 20px;
+}
+
 /* Event Description */
 .event-description {
     background-color: var(--bg-light);
