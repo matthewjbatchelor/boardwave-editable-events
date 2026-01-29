@@ -572,9 +572,15 @@ a:hover {
     max-height: 80px;
     max-width: 250px;
     width: auto;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 15px 25px;
-    border-radius: 8px;
+}
+
+.hero-partner a {
+    display: inline-block;
+    transition: opacity 0.3s ease;
+}
+
+.hero-partner a:hover {
+    opacity: 0.8;
 }
 
 .hero h1 {
@@ -1342,7 +1348,6 @@ a:hover {
     .hero-partner img {
         max-height: 50px;
         max-width: 180px;
-        padding: 10px 15px;
     }
 
     .guests-grid {

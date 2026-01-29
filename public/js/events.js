@@ -185,7 +185,7 @@ function renderEventView(event) {
       <div class="hero-content">
         <h1>${event.title}</h1>
         ${event.subtitle ? `<p class="hero-details">${event.subtitle}</p>` : ''}
-        ${event.partnerLogo ? `<div class="hero-partner"><span>In partnership with</span><img src="/${event.partnerLogo}" alt="${event.partnerName || 'Event Partner'}"></div>` : ''}
+        ${event.partnerLogo ? `<div class="hero-partner"><span>In partnership with</span>${event.partnerWebsite ? `<a href="${event.partnerWebsite}" target="_blank" rel="noopener noreferrer">` : ''}<img src="/${event.partnerLogo}" alt="${event.partnerName || 'Event Partner'}">${event.partnerWebsite ? '</a>' : ''}</div>` : ''}
       </div>
     </section>
 
