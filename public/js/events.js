@@ -84,7 +84,10 @@ function createEventCard(event) {
   `;
 }
 
-async function viewEvent(eventId, updateHistory = true) {
+async function viewEvent(eventId, updateHistory = true, preserveScroll = false) {
+  // Save scroll position if preserving
+  const scrollY = preserveScroll ? window.scrollY : 0;
+
   try {
     const response = await fetch(`/api/events/${eventId}`, { credentials: 'include' });
     currentEvent = await response.json();
@@ -94,7 +97,12 @@ async function viewEvent(eventId, updateHistory = true) {
     document.getElementById('eventsListView').style.display = 'none';
     document.getElementById('eventView').style.display = 'block';
 
-    window.scrollTo(0, 0);
+    // Restore scroll position or scroll to top
+    if (preserveScroll) {
+      setTimeout(() => window.scrollTo(0, scrollY), 0);
+    } else {
+      window.scrollTo(0, 0);
+    }
 
     // Update URL with event slug
     if (updateHistory && currentEvent.slug) {

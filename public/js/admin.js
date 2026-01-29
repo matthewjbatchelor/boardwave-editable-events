@@ -531,7 +531,7 @@ async function saveEvent(eventId) {
     if (response.ok) {
       closeModal();
       if (currentEvent && eventId === currentEvent.id) {
-        viewEvent(eventId);
+        viewEvent(eventId, true, true); // preserve scroll position
       } else {
         loadEvents();
       }
@@ -766,7 +766,7 @@ async function savePerson(type, personId) {
 
     if (response.ok) {
       closeModal();
-      viewEvent(currentEvent.id);
+      viewEvent(currentEvent.id, true, true); // preserve scroll position
     } else {
       const error = await response.json();
       alert('Failed to save: ' + (error.error || 'Unknown error'));
@@ -788,7 +788,7 @@ async function deletePerson(type, personId) {
 
     if (response.ok) {
       closeModal();
-      viewEvent(currentEvent.id);
+      viewEvent(currentEvent.id, true, true); // preserve scroll position
     } else {
       alert('Failed to delete');
     }
@@ -895,7 +895,7 @@ async function saveScheduleItem(itemId) {
 
     if (response.ok) {
       closeModal();
-      viewEvent(currentEvent.id);
+      viewEvent(currentEvent.id, true, true); // preserve scroll position
     } else {
       const error = await response.json();
       alert('Failed to save: ' + (error.error || 'Unknown error'));
@@ -917,7 +917,7 @@ async function deleteScheduleItem(itemId) {
 
     if (response.ok) {
       closeModal();
-      viewEvent(currentEvent.id);
+      viewEvent(currentEvent.id, true, true); // preserve scroll position
     } else {
       alert('Failed to delete');
     }
