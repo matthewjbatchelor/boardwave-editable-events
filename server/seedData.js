@@ -22,7 +22,7 @@ const seedEvent = {
   `,
   welcomeMessage: "We're really looking forward to seeing you.<br>We hope that the contributions and discussions prove valuable.",
   signature: "I am very much looking forward to seeing you there.<br><strong>Kath Easthope, Co-Founder & CEO, Boardwave</strong>",
-  heroImage: "images/hero-background.png",
+  heroImage: "images/herobackground.png",
   contactName: "Emily-Jane Eames Matthews",
   contactTitle: "UK Event Manager",
   contactEmail: "emily-jane@boardwave.org",
