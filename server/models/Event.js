@@ -21,7 +21,7 @@ class Event {
     const result = await query(
       `INSERT INTO events (
         title, slug, subtitle, event_date, event_time, location, venue,
-        hero_image, description, welcome_message, signature,
+        hero_image, description, schedule_heading, schedule_intro, welcome_message, signature,
         contact_name, contact_title, contact_email, contact_phone,
         partner_name, partner_logo, partner_description, partner_website,
         testimonial_text, testimonial_author, testimonial_title, testimonial_company, testimonial_image,
@@ -29,12 +29,13 @@ class Event {
         is_published
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,
-        $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29
+        $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31
       ) RETURNING *`,
       [
         serialized.title, serialized.slug, serialized.subtitle,
         serialized.event_date, serialized.event_time, serialized.location, serialized.venue,
-        serialized.hero_image, serialized.description, serialized.welcome_message, serialized.signature,
+        serialized.hero_image, serialized.description, serialized.schedule_heading, serialized.schedule_intro,
+        serialized.welcome_message, serialized.signature,
         serialized.contact_name, serialized.contact_title, serialized.contact_email, serialized.contact_phone,
         serialized.partner_name, serialized.partner_logo, serialized.partner_description, serialized.partner_website,
         serialized.testimonial_text, serialized.testimonial_author, serialized.testimonial_title,
@@ -52,20 +53,22 @@ class Event {
       `UPDATE events SET
         title = $1, slug = $2, subtitle = $3,
         event_date = $4, event_time = $5, location = $6, venue = $7,
-        hero_image = $8, description = $9, welcome_message = $10, signature = $11,
-        contact_name = $12, contact_title = $13, contact_email = $14, contact_phone = $15,
-        partner_name = $16, partner_logo = $17, partner_description = $18, partner_website = $19,
-        testimonial_text = $20, testimonial_author = $21, testimonial_title = $22,
-        testimonial_company = $23, testimonial_image = $24,
-        connect_intro = $25, connect_instructions = $26, connect_link = $27, connect_image = $28,
-        is_published = $29,
+        hero_image = $8, description = $9, schedule_heading = $10, schedule_intro = $11,
+        welcome_message = $12, signature = $13,
+        contact_name = $14, contact_title = $15, contact_email = $16, contact_phone = $17,
+        partner_name = $18, partner_logo = $19, partner_description = $20, partner_website = $21,
+        testimonial_text = $22, testimonial_author = $23, testimonial_title = $24,
+        testimonial_company = $25, testimonial_image = $26,
+        connect_intro = $27, connect_instructions = $28, connect_link = $29, connect_image = $30,
+        is_published = $31,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $30
+      WHERE id = $32
       RETURNING *`,
       [
         serialized.title, serialized.slug, serialized.subtitle,
         serialized.event_date, serialized.event_time, serialized.location, serialized.venue,
-        serialized.hero_image, serialized.description, serialized.welcome_message, serialized.signature,
+        serialized.hero_image, serialized.description, serialized.schedule_heading, serialized.schedule_intro,
+        serialized.welcome_message, serialized.signature,
         serialized.contact_name, serialized.contact_title, serialized.contact_email, serialized.contact_phone,
         serialized.partner_name, serialized.partner_logo, serialized.partner_description, serialized.partner_website,
         serialized.testimonial_text, serialized.testimonial_author, serialized.testimonial_title,
@@ -99,6 +102,8 @@ class Event {
       venue: event.venue || '',
       hero_image: event.heroImage || '',
       description: event.description || '',
+      schedule_heading: event.scheduleHeading || '',
+      schedule_intro: event.scheduleIntro || '',
       welcome_message: event.welcomeMessage || '',
       signature: event.signature || '',
       contact_name: event.contactName || '',
@@ -134,6 +139,8 @@ class Event {
       venue: row.venue,
       heroImage: row.hero_image,
       description: row.description,
+      scheduleHeading: row.schedule_heading,
+      scheduleIntro: row.schedule_intro,
       welcomeMessage: row.welcome_message,
       signature: row.signature,
       contactName: row.contact_name,

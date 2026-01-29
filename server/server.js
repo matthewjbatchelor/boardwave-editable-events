@@ -133,6 +133,8 @@ async function initializeDatabase() {
         venue TEXT,
         hero_image TEXT,
         description TEXT,
+        schedule_heading TEXT,
+        schedule_intro TEXT,
         welcome_message TEXT,
         signature TEXT,
         contact_name TEXT,
@@ -157,6 +159,14 @@ async function initializeDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // Add new columns for schedule section (for existing databases)
+    try {
+      await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_heading TEXT`);
+      await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_intro TEXT`);
+    } catch (e) {
+      // Columns may already exist
+    }
 
     // Create guests table
     await query(`

@@ -207,9 +207,9 @@ function renderEventView(event) {
             <img src="/images/networking-photo.jpg" alt="Networking">
           </div>
           <div class="schedule-content">
-            <h2>Welcome</h2>
+            ${event.scheduleHeading ? `<div class="schedule-heading">${event.scheduleHeading}</div>` : '<h2>Welcome</h2>'}
             ${event.welcomeMessage ? `<p class="welcome-text">${event.welcomeMessage}</p>` : ''}
-            <h3>Timings for the evening will be as follows:</h3>
+            ${event.scheduleIntro ? `<div class="schedule-intro">${event.scheduleIntro}</div>` : '<h3>Timings for the evening will be as follows:</h3>'}
             <div class="timeline">
               ${event.schedule.map(item => `
                 <div class="timeline-item" data-id="${item.id}">
@@ -218,7 +218,7 @@ function renderEventView(event) {
                 </div>
               `).join('')}
             </div>
-            ${event.signature ? `<p class="signature">${event.signature}</p>` : ''}
+            ${event.signature ? `<div class="signature">${event.signature}</div>` : ''}
           </div>
         </div>
       </div>

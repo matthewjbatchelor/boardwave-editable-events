@@ -247,13 +247,26 @@ async function showEventForm(eventId) {
     <div class="form-section">
       <h3>Schedule Section</h3>
       <div class="form-group">
+        <label>Section Heading</label>
+        <div id="scheduleHeadingEditor" class="quill-editor"></div>
+        <input type="hidden" id="scheduleHeading">
+        <small class="form-hint">The main heading for the schedule section (e.g., "Welcome")</small>
+      </div>
+      <div class="form-group">
+        <label>Introduction Text</label>
+        <div id="scheduleIntroEditor" class="quill-editor"></div>
+        <input type="hidden" id="scheduleIntro">
+        <small class="form-hint">Text that appears before the schedule items (e.g., "Timings for the evening will be as follows:")</small>
+      </div>
+      <div class="form-group">
         <label>Welcome Message</label>
         <div id="eventWelcomeEditor" class="quill-editor"></div>
         <input type="hidden" id="eventWelcome">
       </div>
       <div class="form-group">
-        <label for="eventSignature">Signature</label>
-        <input type="text" id="eventSignature" value="${event?.signature || ''}">
+        <label>Signature</label>
+        <div id="eventSignatureEditor" class="quill-editor"></div>
+        <input type="hidden" id="eventSignature">
       </div>
     </div>
 
@@ -370,7 +383,10 @@ function initializeEventEditors(event) {
     // Fallback: convert editor divs to textareas
     var editorConfigs = [
       { id: 'eventDescriptionEditor', hiddenId: 'eventDescription', content: event ? event.description : '' },
+      { id: 'scheduleHeadingEditor', hiddenId: 'scheduleHeading', content: event ? event.scheduleHeading : '' },
+      { id: 'scheduleIntroEditor', hiddenId: 'scheduleIntro', content: event ? event.scheduleIntro : '' },
       { id: 'eventWelcomeEditor', hiddenId: 'eventWelcome', content: event ? event.welcomeMessage : '' },
+      { id: 'eventSignatureEditor', hiddenId: 'eventSignature', content: event ? event.signature : '' },
       { id: 'partnerDescriptionEditor', hiddenId: 'partnerDescription', content: event ? event.partnerDescription : '' },
       { id: 'testimonialTextEditor', hiddenId: 'testimonialText', content: event ? event.testimonialText : '' },
       { id: 'connectIntroEditor', hiddenId: 'connectIntro', content: event ? event.connectIntro : '' },
@@ -425,7 +441,10 @@ function initializeEventEditors(event) {
 
   // Initialize all editors
   window.descriptionEditor = createEditor('eventDescriptionEditor', 'Enter event description...', event ? event.description : '');
+  window.scheduleHeadingEditor = createEditor('scheduleHeadingEditor', 'Enter section heading (e.g., Welcome)...', event ? event.scheduleHeading : '');
+  window.scheduleIntroEditor = createEditor('scheduleIntroEditor', 'Enter introduction text...', event ? event.scheduleIntro : '');
   window.welcomeEditor = createEditor('eventWelcomeEditor', 'Enter welcome message...', event ? event.welcomeMessage : '');
+  window.signatureEditor = createEditor('eventSignatureEditor', 'Enter signature...', event ? event.signature : '');
   window.partnerDescEditor = createEditor('partnerDescriptionEditor', 'Enter partner description...', event ? event.partnerDescription : '');
   window.testimonialEditor = createEditor('testimonialTextEditor', 'Enter testimonial...', event ? event.testimonialText : '');
   window.connectIntroEditor = createEditor('connectIntroEditor', 'Enter intro text...', event ? event.connectIntro : '');
@@ -451,8 +470,10 @@ async function saveEvent(eventId) {
     location: document.getElementById('eventLocation').value,
     description: getEditorContent(window.descriptionEditor),
     isPublished: document.getElementById('eventPublished').checked,
+    scheduleHeading: getEditorContent(window.scheduleHeadingEditor),
+    scheduleIntro: getEditorContent(window.scheduleIntroEditor),
     welcomeMessage: getEditorContent(window.welcomeEditor),
-    signature: document.getElementById('eventSignature').value,
+    signature: getEditorContent(window.signatureEditor),
     contactName: document.getElementById('contactName').value,
     contactTitle: document.getElementById('contactTitle').value,
     contactEmail: document.getElementById('contactEmail').value,

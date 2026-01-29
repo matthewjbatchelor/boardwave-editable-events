@@ -20,6 +20,8 @@ const seedEvent = {
       <li><strong>Lessons from large-scale deployment:</strong> Invisible has trained 80% of the world's leading LLMs and built systems that work in complex enterprise environments. Guillaume will share lessons from deploying AI at scale, including overcoming fragmented systems, legacy infrastructure, and adoption challenges.</li>
     </ul>
   `,
+  scheduleHeading: "Welcome",
+  scheduleIntro: "Timings for the evening will be as follows:",
   welcomeMessage: "We're really looking forward to seeing you.<br>We hope that the contributions and discussions prove valuable.",
   signature: "I am very much looking forward to seeing you there.<br><strong>Kath Easthope, Co-Founder & CEO, Boardwave</strong>",
   heroImage: "images/herobackground.png",
