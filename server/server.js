@@ -135,6 +135,7 @@ async function initializeDatabase() {
         description TEXT,
         schedule_heading TEXT,
         schedule_intro TEXT,
+        schedule_image TEXT,
         welcome_message TEXT,
         signature TEXT,
         contact_name TEXT,
@@ -150,6 +151,7 @@ async function initializeDatabase() {
         testimonial_title TEXT,
         testimonial_company TEXT,
         testimonial_image TEXT,
+        partner_hero_image TEXT,
         connect_intro TEXT,
         connect_instructions TEXT,
         connect_link TEXT,
@@ -164,6 +166,8 @@ async function initializeDatabase() {
     try {
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_heading TEXT`);
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_intro TEXT`);
+      await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_image TEXT`);
+      await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS partner_hero_image TEXT`);
     } catch (e) {
       // Columns may already exist
     }

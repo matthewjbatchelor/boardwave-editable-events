@@ -22,6 +22,7 @@ const seedEvent = {
   `,
   scheduleHeading: "Welcome",
   scheduleIntro: "Timings for the evening will be as follows:",
+  scheduleImage: "images/networking-photo.jpg",
   welcomeMessage: "We're really looking forward to seeing you.<br>We hope that the contributions and discussions prove valuable.",
   signature: "I am very much looking forward to seeing you there.<br><strong>Kath Easthope, Co-Founder & CEO, Boardwave</strong>",
   heroImage: "images/herobackground.png",
@@ -42,6 +43,7 @@ const seedEvent = {
   testimonialAuthor: "Victoria Peppiatt",
   testimonialTitle: "Co-Founder & Co-CEO",
   testimonialCompany: "Hey Savi",
+  partnerHeroImage: "images/panel-discussion.jpg",
   connectIntro: "Please connect with guests ahead of the event, via our online Membership Directory.",
   connectInstructions: "Visit Event Connect and click 'view profile' or 'message' on a Member's profile.",
   isPublished: true

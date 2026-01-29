@@ -21,25 +21,25 @@ class Event {
     const result = await query(
       `INSERT INTO events (
         title, slug, subtitle, event_date, event_time, location, venue,
-        hero_image, description, schedule_heading, schedule_intro, welcome_message, signature,
+        hero_image, description, schedule_heading, schedule_intro, schedule_image, welcome_message, signature,
         contact_name, contact_title, contact_email, contact_phone,
         partner_name, partner_logo, partner_description, partner_website,
         testimonial_text, testimonial_author, testimonial_title, testimonial_company, testimonial_image,
-        connect_intro, connect_instructions, connect_link, connect_image,
+        partner_hero_image, connect_intro, connect_instructions, connect_link, connect_image,
         is_published
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,
-        $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31
+        $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33
       ) RETURNING *`,
       [
         serialized.title, serialized.slug, serialized.subtitle,
         serialized.event_date, serialized.event_time, serialized.location, serialized.venue,
         serialized.hero_image, serialized.description, serialized.schedule_heading, serialized.schedule_intro,
-        serialized.welcome_message, serialized.signature,
+        serialized.schedule_image, serialized.welcome_message, serialized.signature,
         serialized.contact_name, serialized.contact_title, serialized.contact_email, serialized.contact_phone,
         serialized.partner_name, serialized.partner_logo, serialized.partner_description, serialized.partner_website,
         serialized.testimonial_text, serialized.testimonial_author, serialized.testimonial_title,
-        serialized.testimonial_company, serialized.testimonial_image,
+        serialized.testimonial_company, serialized.testimonial_image, serialized.partner_hero_image,
         serialized.connect_intro, serialized.connect_instructions, serialized.connect_link, serialized.connect_image,
         serialized.is_published
       ]
@@ -54,25 +54,25 @@ class Event {
         title = $1, slug = $2, subtitle = $3,
         event_date = $4, event_time = $5, location = $6, venue = $7,
         hero_image = $8, description = $9, schedule_heading = $10, schedule_intro = $11,
-        welcome_message = $12, signature = $13,
-        contact_name = $14, contact_title = $15, contact_email = $16, contact_phone = $17,
-        partner_name = $18, partner_logo = $19, partner_description = $20, partner_website = $21,
-        testimonial_text = $22, testimonial_author = $23, testimonial_title = $24,
-        testimonial_company = $25, testimonial_image = $26,
-        connect_intro = $27, connect_instructions = $28, connect_link = $29, connect_image = $30,
-        is_published = $31,
+        schedule_image = $12, welcome_message = $13, signature = $14,
+        contact_name = $15, contact_title = $16, contact_email = $17, contact_phone = $18,
+        partner_name = $19, partner_logo = $20, partner_description = $21, partner_website = $22,
+        testimonial_text = $23, testimonial_author = $24, testimonial_title = $25,
+        testimonial_company = $26, testimonial_image = $27, partner_hero_image = $28,
+        connect_intro = $29, connect_instructions = $30, connect_link = $31, connect_image = $32,
+        is_published = $33,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $32
+      WHERE id = $34
       RETURNING *`,
       [
         serialized.title, serialized.slug, serialized.subtitle,
         serialized.event_date, serialized.event_time, serialized.location, serialized.venue,
         serialized.hero_image, serialized.description, serialized.schedule_heading, serialized.schedule_intro,
-        serialized.welcome_message, serialized.signature,
+        serialized.schedule_image, serialized.welcome_message, serialized.signature,
         serialized.contact_name, serialized.contact_title, serialized.contact_email, serialized.contact_phone,
         serialized.partner_name, serialized.partner_logo, serialized.partner_description, serialized.partner_website,
         serialized.testimonial_text, serialized.testimonial_author, serialized.testimonial_title,
-        serialized.testimonial_company, serialized.testimonial_image,
+        serialized.testimonial_company, serialized.testimonial_image, serialized.partner_hero_image,
         serialized.connect_intro, serialized.connect_instructions, serialized.connect_link, serialized.connect_image,
         serialized.is_published, id
       ]
@@ -104,6 +104,7 @@ class Event {
       description: event.description || '',
       schedule_heading: event.scheduleHeading || '',
       schedule_intro: event.scheduleIntro || '',
+      schedule_image: event.scheduleImage || '',
       welcome_message: event.welcomeMessage || '',
       signature: event.signature || '',
       contact_name: event.contactName || '',
@@ -119,6 +120,7 @@ class Event {
       testimonial_title: event.testimonialTitle || '',
       testimonial_company: event.testimonialCompany || '',
       testimonial_image: event.testimonialImage || '',
+      partner_hero_image: event.partnerHeroImage || '',
       connect_intro: event.connectIntro || '',
       connect_instructions: event.connectInstructions || '',
       connect_link: event.connectLink || '',
@@ -141,6 +143,7 @@ class Event {
       description: row.description,
       scheduleHeading: row.schedule_heading,
       scheduleIntro: row.schedule_intro,
+      scheduleImage: row.schedule_image,
       welcomeMessage: row.welcome_message,
       signature: row.signature,
       contactName: row.contact_name,
@@ -156,6 +159,7 @@ class Event {
       testimonialTitle: row.testimonial_title,
       testimonialCompany: row.testimonial_company,
       testimonialImage: row.testimonial_image,
+      partnerHeroImage: row.partner_hero_image,
       connectIntro: row.connect_intro,
       connectInstructions: row.connect_instructions,
       connectLink: row.connect_link,

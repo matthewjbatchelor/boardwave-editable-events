@@ -247,6 +247,12 @@ async function showEventForm(eventId) {
     <div class="form-section">
       <h3>Schedule Section</h3>
       <div class="form-group">
+        <label for="scheduleImageUpload">Schedule Section Image</label>
+        <input type="file" id="scheduleImageUpload" accept="image/*" class="image-upload-input">
+        <div id="scheduleImagePreview" class="image-preview"></div>
+        <small class="form-hint">Image displayed next to the schedule/agenda</small>
+      </div>
+      <div class="form-group">
         <label>Section Heading</label>
         <div id="scheduleHeadingEditor" class="quill-editor"></div>
         <input type="hidden" id="scheduleHeading">
@@ -338,6 +344,12 @@ async function showEventForm(eventId) {
         <label for="testimonialCompany">Author Company</label>
         <input type="text" id="testimonialCompany" value="${event?.testimonialCompany || ''}">
       </div>
+      <div class="form-group">
+        <label for="partnerHeroImageUpload">Partner Section Image</label>
+        <input type="file" id="partnerHeroImageUpload" accept="image/*" class="image-upload-input">
+        <div id="partnerHeroImagePreview" class="image-preview"></div>
+        <small class="form-hint">Large image displayed at the bottom of the Event Partner section</small>
+      </div>
     </div>
 
     <div class="form-section">
@@ -370,8 +382,10 @@ async function showEventForm(eventId) {
   // Initialize Quill editors and image uploads after a short delay to ensure DOM is ready
   setTimeout(() => {
     initializeEventEditors(event);
-    // Setup image upload for partner logo
+    // Setup image uploads
     setupImageUpload('partnerLogoUpload', 'partnerLogoPreview', event ? event.partnerLogo : '');
+    setupImageUpload('scheduleImageUpload', 'scheduleImagePreview', event ? event.scheduleImage : 'images/networking-photo.jpg');
+    setupImageUpload('partnerHeroImageUpload', 'partnerHeroImagePreview', event ? event.partnerHeroImage : 'images/panel-discussion.jpg');
   }, 100);
 }
 
@@ -462,6 +476,8 @@ async function saveEvent(eventId) {
 
   // Handle image uploads
   const partnerLogo = await getImageValue('partnerLogoUpload', 'partnerLogoPreview');
+  const scheduleImage = await getImageValue('scheduleImageUpload', 'scheduleImagePreview');
+  const partnerHeroImage = await getImageValue('partnerHeroImageUpload', 'partnerHeroImagePreview');
 
   const data = {
     title: document.getElementById('eventTitle').value,
@@ -472,6 +488,7 @@ async function saveEvent(eventId) {
     isPublished: document.getElementById('eventPublished').checked,
     scheduleHeading: getEditorContent(window.scheduleHeadingEditor),
     scheduleIntro: getEditorContent(window.scheduleIntroEditor),
+    scheduleImage: scheduleImage,
     welcomeMessage: getEditorContent(window.welcomeEditor),
     signature: getEditorContent(window.signatureEditor),
     contactName: document.getElementById('contactName').value,
@@ -486,6 +503,7 @@ async function saveEvent(eventId) {
     testimonialAuthor: document.getElementById('testimonialAuthor').value,
     testimonialTitle: document.getElementById('testimonialTitle').value,
     testimonialCompany: document.getElementById('testimonialCompany').value,
+    partnerHeroImage: partnerHeroImage,
     connectIntro: getEditorContent(window.connectIntroEditor),
     connectInstructions: getEditorContent(window.connectInstructionsEditor)
   };

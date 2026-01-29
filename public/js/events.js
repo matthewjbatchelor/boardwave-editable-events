@@ -204,7 +204,7 @@ function renderEventView(event) {
       <div class="container">
         <div class="schedule-grid">
           <div class="schedule-image">
-            <img src="/images/networking-photo.jpg" alt="Networking">
+            <img src="/${event.scheduleImage || 'images/networking-photo.jpg'}" alt="Event">
           </div>
           <div class="schedule-content">
             ${event.scheduleHeading ? `<div class="schedule-heading">${event.scheduleHeading}</div>` : '<h2>Welcome</h2>'}
@@ -346,7 +346,7 @@ function renderEventView(event) {
         ` : ''}
 
         <div class="partner-hero-image">
-          <img src="/images/panel-discussion.jpg" alt="Event">
+          <img src="/${event.partnerHeroImage || 'images/panel-discussion.jpg'}" alt="Event">
         </div>
       </div>
     </section>
