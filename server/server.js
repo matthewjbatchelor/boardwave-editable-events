@@ -136,6 +136,7 @@ async function initializeDatabase() {
         description_image TEXT,
         schedule_heading TEXT,
         schedule_intro TEXT,
+        agenda_content TEXT,
         schedule_image TEXT,
         welcome_message TEXT,
         signature TEXT,
@@ -168,6 +169,7 @@ async function initializeDatabase() {
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS description_image TEXT`);
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_heading TEXT`);
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_intro TEXT`);
+      await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS agenda_content TEXT`);
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_image TEXT`);
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS partner_hero_image TEXT`);
     } catch (e) {

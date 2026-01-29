@@ -206,7 +206,7 @@ function renderEventView(event) {
     </section>
 
     <!-- Schedule -->
-    ${event.schedule && event.schedule.length > 0 ? `
+    ${(event.agendaContent || (event.schedule && event.schedule.length > 0)) ? `
     <section id="schedule" class="section schedule">
       <div class="container">
         <div class="schedule-grid">
@@ -216,15 +216,19 @@ function renderEventView(event) {
           <div class="schedule-content">
             ${event.scheduleHeading ? `<div class="schedule-heading">${event.scheduleHeading}</div>` : '<h2>Welcome</h2>'}
             ${event.welcomeMessage ? `<p class="welcome-text">${event.welcomeMessage}</p>` : ''}
-            ${event.scheduleIntro ? `<div class="schedule-intro">${event.scheduleIntro}</div>` : '<h3>Timings for the evening will be as follows:</h3>'}
-            <div class="timeline">
-              ${event.schedule.map(item => `
-                <div class="timeline-item" data-id="${item.id}">
-                  <div class="time">${item.time}</div>
-                  <div class="description">${item.description}</div>
-                </div>
-              `).join('')}
-            </div>
+            ${event.agendaContent ? `
+              <div class="agenda-content">${event.agendaContent}</div>
+            ` : `
+              ${event.scheduleIntro ? `<div class="schedule-intro">${event.scheduleIntro}</div>` : '<h3>Timings for the evening will be as follows:</h3>'}
+              <div class="timeline">
+                ${event.schedule.map(item => `
+                  <div class="timeline-item" data-id="${item.id}">
+                    <div class="time">${item.time}</div>
+                    <div class="description">${item.description}</div>
+                  </div>
+                `).join('')}
+              </div>
+            `}
             ${event.signature ? `<div class="signature">${event.signature}</div>` : ''}
           </div>
         </div>
@@ -421,7 +425,7 @@ function updateEventNavigation(event) {
   if (!navMenu) return;
 
   const sections = ['home', 'event-description'];
-  if (event.schedule?.length) sections.push('schedule');
+  if (event.agendaContent || event.schedule?.length) sections.push('schedule');
   if (event.hosts?.length) sections.push('host');
   if (event.speakers?.length) sections.push('speakers');
   if (event.guests?.length) sections.push('guests');

@@ -23,6 +23,15 @@ const seedEvent = {
   descriptionImage: "images/event-photo-1.jpg",
   scheduleHeading: "Welcome",
   scheduleIntro: "Timings for the evening will be as follows:",
+  agendaContent: `
+    <p><strong>Timings for the evening will be as follows:</strong></p>
+    <p><strong>18:30</strong> – Guest arrivals, drinks, canapes, networking</p>
+    <p><strong>19:15</strong> – Welcome and introductions<br><strong>Kath Easthope</strong>, Co-Founder & CEO, Boardwave</p>
+    <p><strong>19:25</strong> – Panel discussion - AI Beyond the Hype: Scaling AI Across the Business<br><strong>Benjamin Samuels</strong>, General Manager EMEA, Invisible Technologies<br><strong>Guillaume Esnou</strong>, CTO, Invisible Technologies<br>Moderated by: <strong>Benjamin Samuels</strong>, General Manager EMEA, Invisible Technologies</p>
+    <p><strong>20:00</strong> – Q&A</p>
+    <p><strong>20:15</strong> – Food served & continued networking</p>
+    <p><strong>21:30</strong> – Guest departures</p>
+  `,
   scheduleImage: "images/networking-photo.jpg",
   welcomeMessage: "We're really looking forward to seeing you.<br>We hope that the contributions and discussions prove valuable.",
   signature: "I am very much looking forward to seeing you there.<br><strong>Kath Easthope, Co-Founder & CEO, Boardwave</strong>",

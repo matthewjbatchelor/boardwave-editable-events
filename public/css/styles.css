@@ -773,6 +773,19 @@ a:hover {
     font-size: 1.2rem;
 }
 
+.agenda-content {
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+.agenda-content p {
+    margin-bottom: 15px;
+}
+
+.agenda-content strong {
+    color: var(--accent-gold);
+}
+
 /* Profile Cards (Host, Speakers) */
 .host,
 .speakers {

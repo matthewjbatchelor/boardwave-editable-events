@@ -265,10 +265,10 @@ async function showEventForm(eventId) {
         <small class="form-hint">The main heading for the schedule section (e.g., "Welcome")</small>
       </div>
       <div class="form-group">
-        <label>Introduction Text</label>
-        <div id="scheduleIntroEditor" class="quill-editor"></div>
-        <input type="hidden" id="scheduleIntro">
-        <small class="form-hint">Text that appears before the schedule items (e.g., "Timings for the evening will be as follows:")</small>
+        <label>Agenda Content</label>
+        <div id="agendaContentEditor" class="quill-editor"></div>
+        <input type="hidden" id="agendaContent">
+        <small class="form-hint">Full agenda with timings (e.g., "18:30 – Guest arrivals, drinks...")</small>
       </div>
       <div class="form-group">
         <label>Welcome Message</label>
@@ -405,7 +405,7 @@ function initializeEventEditors(event) {
     var editorConfigs = [
       { id: 'eventDescriptionEditor', hiddenId: 'eventDescription', content: event ? event.description : '' },
       { id: 'scheduleHeadingEditor', hiddenId: 'scheduleHeading', content: event ? event.scheduleHeading : '' },
-      { id: 'scheduleIntroEditor', hiddenId: 'scheduleIntro', content: event ? event.scheduleIntro : '' },
+      { id: 'agendaContentEditor', hiddenId: 'agendaContent', content: event ? event.agendaContent : '' },
       { id: 'eventWelcomeEditor', hiddenId: 'eventWelcome', content: event ? event.welcomeMessage : '' },
       { id: 'eventSignatureEditor', hiddenId: 'eventSignature', content: event ? event.signature : '' },
       { id: 'partnerDescriptionEditor', hiddenId: 'partnerDescription', content: event ? event.partnerDescription : '' },
@@ -463,7 +463,7 @@ function initializeEventEditors(event) {
   // Initialize all editors
   window.descriptionEditor = createEditor('eventDescriptionEditor', 'Enter event description...', event ? event.description : '');
   window.scheduleHeadingEditor = createEditor('scheduleHeadingEditor', 'Enter section heading (e.g., Welcome)...', event ? event.scheduleHeading : '');
-  window.scheduleIntroEditor = createEditor('scheduleIntroEditor', 'Enter introduction text...', event ? event.scheduleIntro : '');
+  window.agendaContentEditor = createEditor('agendaContentEditor', 'Enter agenda with timings...', event ? event.agendaContent : '');
   window.welcomeEditor = createEditor('eventWelcomeEditor', 'Enter welcome message...', event ? event.welcomeMessage : '');
   window.signatureEditor = createEditor('eventSignatureEditor', 'Enter signature...', event ? event.signature : '');
   window.partnerDescEditor = createEditor('partnerDescriptionEditor', 'Enter partner description...', event ? event.partnerDescription : '');
@@ -496,7 +496,7 @@ async function saveEvent(eventId) {
     descriptionImage: descriptionImage,
     isPublished: document.getElementById('eventPublished').checked,
     scheduleHeading: getEditorContent(window.scheduleHeadingEditor),
-    scheduleIntro: getEditorContent(window.scheduleIntroEditor),
+    agendaContent: getEditorContent(window.agendaContentEditor),
     scheduleImage: scheduleImage,
     welcomeMessage: getEditorContent(window.welcomeEditor),
     signature: getEditorContent(window.signatureEditor),
