@@ -85,6 +85,9 @@ app.use('/api/hosts', hostsRoutes);
 app.use('/api/schedule', scheduleRoutes);
 app.use('/api/upload', uploadRoutes);
 
+// Serve media from database (for uploaded images)
+app.use('/', uploadRoutes);
+
 // Serve index.html for all non-API routes (SPA support)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
@@ -290,6 +293,17 @@ async function initializeDatabase() {
         key VARCHAR(255) PRIMARY KEY,
         value TEXT NOT NULL,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // Create media table for storing uploaded images in database
+    await query(`
+      CREATE TABLE IF NOT EXISTS media (
+        id SERIAL PRIMARY KEY,
+        filename VARCHAR(255) NOT NULL,
+        mimetype VARCHAR(100) NOT NULL,
+        data TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
