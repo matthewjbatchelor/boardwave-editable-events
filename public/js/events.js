@@ -379,17 +379,21 @@ function renderEventView(event) {
     ` : ''}
 
     <!-- Contact -->
-    ${event.contactName || event.contactEmail ? `
+    ${event.contactName || event.contactEmail || window.isAdmin ? `
     <section id="contact" class="section contact">
       <div class="container">
         <div class="contact-content">
           <img src="/images/blackboardwave.png" alt="Boardwave" class="contact-logo">
           <h2>Contact us:</h2>
           <div class="contact-details">
-            ${event.contactName ? `<p><strong>${event.contactName}</strong></p>` : ''}
-            ${event.contactTitle ? `<p>${event.contactTitle}</p>` : ''}
-            ${event.contactEmail ? `<p><a href="mailto:${event.contactEmail}">${event.contactEmail}</a></p>` : ''}
-            ${event.contactPhone ? `<p><a href="tel:${event.contactPhone}">${event.contactPhone}</a></p>` : ''}
+            ${!event.contactName && !event.contactEmail && window.isAdmin ? `
+              <p class="empty-section-message">No contact information added yet. Add contact details in the Event Details section.</p>
+            ` : `
+              ${event.contactName ? `<p><strong>${event.contactName}</strong></p>` : ''}
+              ${event.contactTitle ? `<p>${event.contactTitle}</p>` : ''}
+              ${event.contactEmail ? `<p><a href="mailto:${event.contactEmail}">${event.contactEmail}</a></p>` : ''}
+              ${event.contactPhone ? `<p><a href="tel:${event.contactPhone}">${event.contactPhone}</a></p>` : ''}
+            `}
           </div>
         </div>
       </div>
@@ -446,7 +450,7 @@ function updateEventNavigation(event) {
   if (event.guests?.length || window.isAdmin) sections.push('guests');
   if (event.connectIntro) sections.push('event-connect');
   if (event.partnerName) sections.push('event-partner');
-  if (event.contactName || event.contactEmail) sections.push('contact');
+  if (event.contactName || event.contactEmail || window.isAdmin) sections.push('contact');
 
   const labels = {
     'home': 'Home',

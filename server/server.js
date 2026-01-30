@@ -199,6 +199,13 @@ async function initializeDatabase() {
           await query(`UPDATE events SET agenda_content = $1 WHERE id = $2`, [agendaHtml, event.id]);
         }
       }
+
+      // Populate default contact information for events that don't have it
+      await query(`UPDATE events SET contact_name = 'Emily-Jane Eames Matthews' WHERE contact_name IS NULL OR contact_name = ''`);
+      await query(`UPDATE events SET contact_title = 'UK Event Manager' WHERE contact_title IS NULL OR contact_title = ''`);
+      await query(`UPDATE events SET contact_email = 'emily-jane@boardwave.org' WHERE contact_email IS NULL OR contact_email = ''`);
+      await query(`UPDATE events SET contact_phone = '+44 (0)7530 209 059' WHERE contact_phone IS NULL OR contact_phone = ''`);
+
       console.log('Populated default values for new event fields');
     } catch (e) {
       console.log('Migration for default values already applied or error:', e.message);
