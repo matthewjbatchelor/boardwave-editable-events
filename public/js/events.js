@@ -508,9 +508,12 @@ async function checkAuthAndShowContent() {
     const response = await fetch('/api/auth/session', { credentials: 'include' });
     const data = await response.json();
 
-    if (data.isAuthenticated && data.user?.role === 'admin') {
+    if (data.authenticated && data.user?.role === 'admin') {
       // Admin can see events list
       window.isAdmin = true;
+      window.currentUser = data.user;
+      updateAuthUI();
+      enableAdminFeatures();
       loadEvents();
     } else {
       // Not admin - show message that direct link is required
