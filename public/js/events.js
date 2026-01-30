@@ -136,6 +136,9 @@ async function viewEvent(eventId, updateHistory = true, preserveScroll = false) 
 
 async function viewEventBySlug(slug, updateHistory = true) {
   try {
+    // Wait for session check to complete first
+    await checkSession();
+
     const response = await fetch(`/api/events/${slug}`, { credentials: 'include' });
     if (!response.ok) {
       // Event not found, show events list
