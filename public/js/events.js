@@ -2,6 +2,25 @@
 
 let currentEvent = null;
 
+// Format date with ordinal suffix (e.g., "2nd February 2026")
+function formatEventDate(dateString) {
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.toLocaleDateString('en-GB', { month: 'long' });
+  const year = date.getFullYear();
+
+  // Get ordinal suffix
+  const ordinal = (n) => {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  };
+
+  return `${ordinal(day)} ${month} ${year}`;
+}
+
 // URL Routing
 function getEventSlugFromUrl() {
   const path = window.location.pathname;
@@ -196,6 +215,7 @@ function renderEventView(event) {
       <div class="hero-content">
         <h1>${event.title}</h1>
         ${event.subtitle ? `<p class="hero-details">${event.subtitle}</p>` : ''}
+        ${event.eventDate || event.location ? `<p class="hero-date-location">${[formatEventDate(event.eventDate), event.location].filter(Boolean).join(' | ')}</p>` : ''}
         ${event.partnerLogo ? `<div class="hero-partner"><span>In partnership with</span>${event.partnerWebsite ? `<a href="${event.partnerWebsite}" target="_blank" rel="noopener noreferrer">` : ''}<img src="/${event.partnerLogo}" alt="${event.partnerName || 'Event Partner'}">${event.partnerWebsite ? '</a>' : ''}</div>` : ''}
       </div>
     </section>
