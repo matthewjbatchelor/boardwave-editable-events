@@ -383,7 +383,7 @@ function renderEventView(event) {
     <section id="contact" class="section contact">
       <div class="container">
         <div class="contact-content">
-          <img src="/images/blackboardwave.png" alt="Boardwave" class="contact-logo">
+          <img src="/images/Boardwave_White.png" alt="Boardwave" class="contact-logo">
           <h2>Contact us:</h2>
           <div class="contact-details">
             ${!event.contactName && !event.contactEmail && window.isAdmin ? `
