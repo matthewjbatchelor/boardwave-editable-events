@@ -1,5 +1,40 @@
 // Admin functionality for event management
 
+// Track pending operations to prevent concurrent requests
+let pendingOperation = false;
+
+// API request helper with retry logic
+async function apiRequest(url, options = {}, retries = 3) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        credentials: 'include',
+        ...options
+      });
+
+      if (response.status === 401) {
+        // Session expired - try to recover
+        const sessionCheck = await fetch('/api/auth/session', { credentials: 'include' });
+        const sessionData = await sessionCheck.json();
+        if (!sessionData.authenticated) {
+          alert('Your session has expired. Please log in again.');
+          window.location.reload();
+          return null;
+        }
+      }
+
+      return response;
+    } catch (error) {
+      console.error(`Request failed (attempt ${attempt}/${retries}):`, error);
+      if (attempt === retries) {
+        throw error;
+      }
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
+  }
+}
+
 // Image upload helper function
 async function uploadImage(file) {
   const formData = new FormData();
@@ -551,21 +586,29 @@ async function deleteEvent(eventId) {
     return;
   }
 
+  if (pendingOperation) {
+    alert('Please wait for the current operation to complete.');
+    return;
+  }
+
+  pendingOperation = true;
+
   try {
-    const response = await fetch(`/api/events/${eventId}`, {
-      method: 'DELETE',
-      credentials: 'include'
+    const response = await apiRequest(`/api/events/${eventId}`, {
+      method: 'DELETE'
     });
 
-    if (response.ok) {
+    if (response && response.ok) {
       closeModal();
       showEventsList();
-    } else {
+    } else if (response) {
       alert('Failed to delete event');
     }
   } catch (error) {
     console.error('Error deleting event:', error);
-    alert('Failed to delete event');
+    alert('Failed to delete event. Please try again.');
+  } finally {
+    pendingOperation = false;
   }
 }
 
@@ -782,21 +825,32 @@ async function savePerson(type, personId) {
 async function deletePerson(type, personId) {
   if (!confirm('Are you sure you want to delete this?')) return;
 
+  // Prevent concurrent delete operations
+  if (pendingOperation) {
+    alert('Please wait for the current operation to complete.');
+    return;
+  }
+
+  pendingOperation = true;
+
   try {
-    const response = await fetch(`/api/${type}s/${personId}`, {
-      method: 'DELETE',
-      credentials: 'include'
+    const response = await apiRequest(`/api/${type}s/${personId}`, {
+      method: 'DELETE'
     });
 
-    if (response.ok) {
+    if (response && response.ok) {
       closeModal();
+      // Small delay before refreshing to let the database settle
+      await new Promise(resolve => setTimeout(resolve, 200));
       viewEvent(currentEvent.id, true, true); // preserve scroll position
-    } else {
+    } else if (response) {
       alert('Failed to delete');
     }
   } catch (error) {
     console.error('Error deleting:', error);
-    alert('Failed to delete');
+    alert('Failed to delete. Please try again.');
+  } finally {
+    pendingOperation = false;
   }
 }
 
@@ -912,21 +966,30 @@ async function saveScheduleItem(itemId) {
 async function deleteScheduleItem(itemId) {
   if (!confirm('Are you sure you want to delete this schedule item?')) return;
 
+  if (pendingOperation) {
+    alert('Please wait for the current operation to complete.');
+    return;
+  }
+
+  pendingOperation = true;
+
   try {
-    const response = await fetch(`/api/schedule/${itemId}`, {
-      method: 'DELETE',
-      credentials: 'include'
+    const response = await apiRequest(`/api/schedule/${itemId}`, {
+      method: 'DELETE'
     });
 
-    if (response.ok) {
+    if (response && response.ok) {
       closeModal();
+      await new Promise(resolve => setTimeout(resolve, 200));
       viewEvent(currentEvent.id, true, true); // preserve scroll position
-    } else {
+    } else if (response) {
       alert('Failed to delete');
     }
   } catch (error) {
     console.error('Error deleting:', error);
-    alert('Failed to delete');
+    alert('Failed to delete. Please try again.');
+  } finally {
+    pendingOperation = false;
   }
 }
 
