@@ -358,6 +358,7 @@ function renderEventView(event) {
 
         ${event.testimonialText ? `
         <div class="testimonial">
+          <div class="section-header">${event.testimonialHeading || 'TESTIMONIAL'}</div>
           <blockquote>
             <p>${event.testimonialText}</p>
             ${event.testimonialAuthor ? `

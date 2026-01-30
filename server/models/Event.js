@@ -24,12 +24,12 @@ class Event {
         hero_image, description, description_image, schedule_heading, schedule_intro, agenda_content, schedule_image, welcome_message, signature,
         contact_name, contact_title, contact_email, contact_phone,
         partner_name, partner_logo, partner_description, partner_website,
-        testimonial_text, testimonial_author, testimonial_title, testimonial_company, testimonial_image,
+        testimonial_heading, testimonial_text, testimonial_author, testimonial_title, testimonial_company, testimonial_image,
         partner_hero_image, connect_intro, connect_instructions, connect_link, connect_image,
         is_published
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,
-        $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35
+        $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36
       ) RETURNING *`,
       [
         serialized.title, serialized.slug, serialized.subtitle,
@@ -39,7 +39,7 @@ class Event {
         serialized.schedule_image, serialized.welcome_message, serialized.signature,
         serialized.contact_name, serialized.contact_title, serialized.contact_email, serialized.contact_phone,
         serialized.partner_name, serialized.partner_logo, serialized.partner_description, serialized.partner_website,
-        serialized.testimonial_text, serialized.testimonial_author, serialized.testimonial_title,
+        serialized.testimonial_heading, serialized.testimonial_text, serialized.testimonial_author, serialized.testimonial_title,
         serialized.testimonial_company, serialized.testimonial_image, serialized.partner_hero_image,
         serialized.connect_intro, serialized.connect_instructions, serialized.connect_link, serialized.connect_image,
         serialized.is_published
@@ -59,12 +59,12 @@ class Event {
         schedule_image = $14, welcome_message = $15, signature = $16,
         contact_name = $17, contact_title = $18, contact_email = $19, contact_phone = $20,
         partner_name = $21, partner_logo = $22, partner_description = $23, partner_website = $24,
-        testimonial_text = $25, testimonial_author = $26, testimonial_title = $27,
-        testimonial_company = $28, testimonial_image = $29, partner_hero_image = $30,
-        connect_intro = $31, connect_instructions = $32, connect_link = $33, connect_image = $34,
-        is_published = $35,
+        testimonial_heading = $25, testimonial_text = $26, testimonial_author = $27, testimonial_title = $28,
+        testimonial_company = $29, testimonial_image = $30, partner_hero_image = $31,
+        connect_intro = $32, connect_instructions = $33, connect_link = $34, connect_image = $35,
+        is_published = $36,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $36
+      WHERE id = $37
       RETURNING *`,
       [
         serialized.title, serialized.slug, serialized.subtitle,
@@ -74,7 +74,7 @@ class Event {
         serialized.schedule_image, serialized.welcome_message, serialized.signature,
         serialized.contact_name, serialized.contact_title, serialized.contact_email, serialized.contact_phone,
         serialized.partner_name, serialized.partner_logo, serialized.partner_description, serialized.partner_website,
-        serialized.testimonial_text, serialized.testimonial_author, serialized.testimonial_title,
+        serialized.testimonial_heading, serialized.testimonial_text, serialized.testimonial_author, serialized.testimonial_title,
         serialized.testimonial_company, serialized.testimonial_image, serialized.partner_hero_image,
         serialized.connect_intro, serialized.connect_instructions, serialized.connect_link, serialized.connect_image,
         serialized.is_published, id
@@ -120,6 +120,7 @@ class Event {
       partner_logo: event.partnerLogo || '',
       partner_description: event.partnerDescription || '',
       partner_website: event.partnerWebsite || '',
+      testimonial_heading: event.testimonialHeading || 'TESTIMONIAL',
       testimonial_text: event.testimonialText || '',
       testimonial_author: event.testimonialAuthor || '',
       testimonial_title: event.testimonialTitle || '',
@@ -161,6 +162,7 @@ class Event {
       partnerLogo: row.partner_logo,
       partnerDescription: row.partner_description,
       partnerWebsite: row.partner_website,
+      testimonialHeading: row.testimonial_heading,
       testimonialText: row.testimonial_text,
       testimonialAuthor: row.testimonial_author,
       testimonialTitle: row.testimonial_title,

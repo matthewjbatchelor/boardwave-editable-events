@@ -367,6 +367,10 @@ async function showEventForm(eventId) {
     <div class="form-section">
       <h3>Testimonial</h3>
       <div class="form-group">
+        <label for="testimonialHeading">Testimonial Heading</label>
+        <input type="text" id="testimonialHeading" value="${event?.testimonialHeading || 'TESTIMONIAL'}">
+      </div>
+      <div class="form-group">
         <label>Testimonial Text</label>
         <div id="testimonialTextEditor" class="quill-editor"></div>
         <input type="hidden" id="testimonialText">
@@ -544,6 +548,7 @@ async function saveEvent(eventId) {
     partnerLogo: partnerLogo,
     partnerDescription: getEditorContent(window.partnerDescEditor),
     partnerWebsite: document.getElementById('partnerWebsite').value,
+    testimonialHeading: document.getElementById('testimonialHeading').value,
     testimonialText: getEditorContent(window.testimonialEditor),
     testimonialAuthor: document.getElementById('testimonialAuthor').value,
     testimonialTitle: document.getElementById('testimonialTitle').value,

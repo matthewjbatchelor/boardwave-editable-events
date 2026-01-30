@@ -175,6 +175,7 @@ async function initializeDatabase() {
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS agenda_content TEXT`);
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS schedule_image TEXT`);
       await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS partner_hero_image TEXT`);
+      await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS testimonial_heading TEXT`);
     } catch (e) {
       // Columns may already exist
     }
@@ -208,6 +209,9 @@ async function initializeDatabase() {
       await query(`UPDATE events SET contact_title = 'UK Event Manager' WHERE contact_title IS NULL OR contact_title = ''`);
       await query(`UPDATE events SET contact_email = 'emily-jane@boardwave.org' WHERE contact_email IS NULL OR contact_email = ''`);
       await query(`UPDATE events SET contact_phone = '+44 (0)7530 209 059' WHERE contact_phone IS NULL OR contact_phone = ''`);
+
+      // Set default testimonial heading
+      await query(`UPDATE events SET testimonial_heading = 'TESTIMONIAL' WHERE testimonial_heading IS NULL OR testimonial_heading = ''`);
 
       console.log('Populated default values for new event fields');
     } catch (e) {
