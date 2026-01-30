@@ -430,6 +430,7 @@ function initializeEventEditors(event) {
   var toolbarOptions = [
     [{ 'header': [1, 2, 3, false] }],
     ['bold', 'italic', 'underline'],
+    [{ 'color': [] }],
     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
     ['link'],
     ['clean']
@@ -710,6 +711,7 @@ async function showPersonForm(type, personId) {
         modules: {
           toolbar: [
             ['bold', 'italic', 'underline'],
+            [{ 'color': [] }],
             ['link'],
             ['clean']
           ]
@@ -855,6 +857,7 @@ async function showScheduleForm(itemId) {
       modules: {
         toolbar: [
           ['bold', 'italic', 'underline'],
+          [{ 'color': [] }],
           ['link'],
           ['clean']
         ]
