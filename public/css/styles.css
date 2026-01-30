@@ -1129,10 +1129,27 @@ a:hover {
 
 /* Contact */
 .contact {
-    background-color: var(--primary-dark);
+    background: url('/images/herobackground.png') center center / cover no-repeat;
     color: var(--text-light);
     text-align: center;
     padding: 100px 20px;
+    position: relative;
+}
+
+.contact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(26, 26, 26, 0.7);
+    z-index: 1;
+}
+
+.contact .container {
+    position: relative;
+    z-index: 2;
 }
 
 .contact-logo {
