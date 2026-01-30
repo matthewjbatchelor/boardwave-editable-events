@@ -252,7 +252,7 @@ function renderEventView(event) {
     <section id="host" class="section host">
       <div class="container">
         <h2>Introducing</h2>
-        <div class="section-header">HOST</div>
+        <div class="section-header">${event.hosts && event.hosts.length > 1 ? 'HOSTS' : 'HOST'}</div>
         ${event.hosts && event.hosts.length > 0 ? event.hosts.map(host => `
           <div class="profile-card" data-id="${host.id}">
             <div class="profile-image">
@@ -273,7 +273,7 @@ function renderEventView(event) {
     ${(event.speakers && event.speakers.length > 0) || window.isAdmin ? `
     <section id="speakers" class="section speakers">
       <div class="container">
-        <div class="section-header">SPEAKERS</div>
+        <div class="section-header">${event.speakers && event.speakers.length === 1 ? 'SPEAKER' : 'SPEAKERS'}</div>
         ${event.speakers && event.speakers.length > 0 ? `
         <div class="speakers-grid">
           ${event.speakers.map(speaker => `
@@ -456,8 +456,8 @@ function updateEventNavigation(event) {
     'home': 'Home',
     'event-description': 'Event',
     'schedule': 'Schedule',
-    'host': 'Host',
-    'speakers': 'Speakers',
+    'host': event.hosts && event.hosts.length > 1 ? 'Hosts' : 'Host',
+    'speakers': event.speakers && event.speakers.length === 1 ? 'Speaker' : 'Speakers',
     'guests': 'Guests',
     'event-connect': 'Connect',
     'event-partner': 'Partner',
